@@ -161,6 +161,226 @@ class Index extends MY_Controller
         }
     }
 
+    public function facebook_login()
+    {
+        include_once APPPATH . "libraries/Facebook/autoload.php";
+        $fb = new Facebook\Facebook(array(
+        'app_id' => '1621516391231142', // Replace {app-id} with your app id
+        'app_secret' => '700dbe7cbdfe2ab506e58ce1e4afee53',
+        'default_graph_version' => 'v2.9'
+        ));
+
+        $helper = $fb->getRedirectLoginHelper();
+        $permissions = array('email'); // Optional permissions
+        $loginUrl = $helper->getLoginUrl(base_url('facebook-callback'), $permissions);
+        $fb_login_url = ($loginUrl);
+        redirect($fb_login_url, 'refresh');
+        exit;
+    }
+
+    public function google_login()
+    {
+        include_once APPPATH . "libraries/Google/autoload.php";
+        $client_id = '64946543542-d5qjd9vp2f71qrd62p13l1ftbeon40dg.apps.googleusercontent.com';
+        $client_secret = 'h3Fkf00VUVHvSAMf4aLFhefG';
+        $redirect_uri = base_url('google-callback');
+        $client = new Google_Client();
+        $client->setClientId($client_id);
+        $client->setClientSecret($client_secret);
+        $client->setRedirectUri($redirect_uri);
+        $client->addScope("email");
+        $client->addScope("profile");
+        $authUrl = $client->createAuthUrl();
+
+        redirect(urldecode($authUrl), 'refresh');
+    }
+
+    function fb_callback() {
+		include_once APPPATH . "libraries/Facebook/autoload.php";
+		$fb = new Facebook\Facebook(array(
+			'app_id' => '513833342331811',
+			'app_secret' => '8a7378961461fd4c002f70e234e30a4a',
+			'default_graph_version' => 'v2.9'
+		));
+		$helper = $fb->getRedirectLoginHelper();
+		try {
+			$accessToken = $helper->getAccessToken();
+		} catch (Facebook\Exceptions\FacebookResponseException $e) {
+            // When Graph returns an error
+			echo 'Graph returned an error: ' . $e->getMessage();
+			exit;
+		} catch (Facebook\Exceptions\FacebookSDKException $e) {
+            // When validation fails or other local issues
+			echo 'Facebook SDK returned an error: ' . $e->getMessage();
+			exit;
+		}
+
+		if (!isset($accessToken)) {
+			if ($helper->getError()) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "Error: " . $helper->getError() . "\n";
+				echo "Error Code: " . $helper->getErrorCode() . "\n";
+				echo "Error Reason: " . $helper->getErrorReason() . "\n";
+				echo "Error Description: " . $helper->getErrorDescription() . "\n";
+			} else {
+				header('HTTP/1.0 400 Bad Request');
+				echo 'Bad request';
+			}
+			exit;
+		}
+		$this->session->set_userdata('fb_access_token', (string) $accessToken);
+		$res = $fb->get('/me', $accessToken);
+		$user = $res->getGraphObject();
+		$data = array();
+		$data['access_token'] = $accessToken;
+		$data['name'] = $user->getProperty('name');
+		$data['email'] = $user->getProperty('email');
+		$data['social_id'] = trim($user->getProperty('id'));
+
+		if (!empty($data['name']) && !empty($data['social_id']) && !empty($data['access_token'])) {
+			if ($mem = $this->member->socialIdExists('facebook', $data['social_id'])) {
+
+				$this->member->update_last_login($mem->mem_id);
+				$this->session->set_userdata('mem_type', $mem->mem_type);
+				$this->session->set_userdata('mem_id', $mem->mem_id);
+			} else {
+				$image='';
+				if(!empty($data['image'])){
+					
+					$image = file_get_contents($data['image']);
+					$file_name=md5(rand(100, 1000)) . '_' .time() . '_' . rand(1111, 9999). '.jpg';
+
+					$dir = UPLOAD_VPATH . 'vp/'.$file_name;
+					@file_put_contents($dir, $image);
+
+					generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p50x50/", $file_name, 50);
+					generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p150x150/", $file_name, 150);
+					generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p300x300/", $file_name, 300);
+
+					$image=$file_name;
+				}
+
+				if($data['email']!=''){
+					$mem_row = $this->member->emailExists($data['email']);
+					if (count($mem_row) > 0)
+						$data['email']='';
+
+				}
+
+				$arr = explode(" ", $data['name']);
+				$new_vals = array(
+					'mem_type' => 'student',
+					'mem_social_type' => 'facebook',
+					'mem_social_id' => $data['social_id'],
+					'mem_fname' => $arr[0],
+					'mem_lname' => $arr[1],
+					'mem_email' => $data['email'],
+					'mem_status' => '1',
+					'mem_verified' => '1',
+					'mem_image' => $image
+				);
+				$this->load->library('my_braintree');
+        		$new_vals['mem_braintree_id']=$this->my_braintree->create_customer(array('firstName' => ucfirst($new_vals['mem_fname']),'lastName' => ucfirst($new_vals['mem_lname']),'email' => $new_vals['mem_email']));
+        		
+				$mem_id = $this->member->save($new_vals);
+				
+				$this->member->update_last_login($mem_id);
+				$this->session->set_userdata('mem_type', 'student');
+				$this->session->set_userdata('mem_id', $mem_id);
+				// $this->sendEmail();
+			}
+			$redirect_url=$this->session->mem_type=='student'?'account-settings':'dashboard';
+			redirect($redirect_url, 'refresh');
+			exit;
+		}
+	}
+
+	function google_callback() {
+		include_once APPPATH . "libraries/Google/autoload.php";
+
+		$client_id = '64946543542-d5qjd9vp2f71qrd62p13l1ftbeon40dg.apps.googleusercontent.com';
+		$client_secret = 'h3Fkf00VUVHvSAMf4aLFhefG';
+		$redirect_uri = base_url('google-callback');
+
+		$client = new Google_Client();
+		$client->setClientId($client_id);
+		$client->setClientSecret($client_secret);
+		$client->setRedirectUri($redirect_uri);
+
+		$client->authenticate($_GET['code']);
+		$accessToken = $client->getAccessToken();
+		$client->setAccessToken($accessToken);
+
+		$service = new Google_Service_Oauth2($client);
+		$data = array();
+        $user = $service->userinfo->get(); //get user info 
+
+        $data['access_token'] = $accessToken;
+        $data['social_id'] = $user->id;
+        $data['name'] = $user->name;
+        $data['email'] = $user->email;
+        $data['image'] = $user->picture;
+        if (!empty($data['name']) && !empty($data['social_id']) && !empty($data['access_token'])) {
+
+
+        	if ($mem = $this->member->socialIdExists('google', $data['social_id'])) {
+
+        		$this->member->update_last_login($mem->mem_id);
+        		$this->session->set_userdata('mem_type', $mem->mem_type);
+        		$this->session->set_userdata('mem_id', $mem->mem_id);
+        	} else {
+
+        		$image='';
+        		if(!empty($data['image'])){
+        			
+        			$image = file_get_contents($data['image']);
+        			$file_name=md5(rand(100, 1000)) . '_' .time() . '_' . rand(1111, 9999). '.jpg';
+
+        			$dir = UPLOAD_VPATH . 'vp/'.$file_name;
+        			@file_put_contents($dir, $image);
+
+        			generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p50x50/", $file_name, 50);
+        			generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p150x150/", $file_name, 150);
+        			generate_thumb(UPLOAD_VPATH . "vp/", UPLOAD_VPATH . "p300x300/", $file_name, 300);
+
+        			$image=$file_name;
+        		}
+        		if($data['email']!=''){
+        			$mem_row = $this->member->emailExists($data['email']);
+        			if (count($mem_row) > 0)
+        				$data['email']='';
+
+        		}
+
+        		$arr = explode(" ", $data['name']);
+        		$new_vals = array(
+        			'mem_type' => 'student',
+        			'mem_social_type' => 'google',
+        			'mem_social_id' => $data['social_id'],
+        			'mem_fname' => $arr[0],
+        			'mem_lname' => $arr[1],
+        			'mem_email' => $data['email'],
+        			'mem_status' => '1',
+        			'mem_verified' => '1',
+        			'mem_image' => $image
+        		);
+
+        		$this->load->library('my_stripe');
+        		$new_vals['mem_stripe_id']=$this->my_stripe->save_customer(array('name' => ucfirst($new_vals['mem_fname']).' '.ucfirst($new_vals['mem_lname']),'email' => $new_vals['mem_email'],"description" => "Crainly Customer ".ucfirst($new_vals['mem_fname']).' '.ucfirst($new_vals['mem_lname'])));
+
+        		$mem_id = $this->member->save($new_vals);
+
+        		$this->member->update_last_login($mem_id);
+        		$this->session->set_userdata('mem_type', 'student');
+        		$this->session->set_userdata('mem_id', $mem_id);
+        		// $this->sendEmail();
+        	}
+        }
+        $redirect_url=$this->session->mem_type=='student'?'account-settings':'dashboard';
+        redirect($redirect_url, 'refresh');
+        exit;
+    }
+
     function signup_as()
     {
         $this->MemLogged();

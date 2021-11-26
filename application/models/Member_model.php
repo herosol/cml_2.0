@@ -68,6 +68,76 @@ class Member_model extends CRUD_Model
         return $vendors;
     }
 
+    function get_nearby_vendors_advanced($selections, $params)
+    {
+        $this->db->from($this->table_name);
+        $this->db->select('*, ( 3959 * acos( cos( radians("'.$selections['lat'].'") ) * cos( radians( mem_map_lat ) )
+        * cos( radians( mem_map_lng ) - radians("'.$selections['long'].'") ) + sin( radians("'.$selections['lat'].'") ) 
+        * sin( radians( mem_map_lat ) ) ) ) AS distance');
+        # IF RATING
+        if(isset($params['star_rating']))
+        {
+            $avgStart = $params['star_rating'];
+        }
+
+        # IF DISTANCE RANGES
+        if(isset($params['distance']))
+        {
+            $distanceIndexes = explode(';', $params['distance']);
+            $distanceStart = $distanceIndexes[0];
+            $distanceEnd   = $distanceIndexes[1];
+        }
+        else
+        {
+            $distanceStart = '0';
+            $distanceEnd   =  $this->data['site_settings']->site_radius > 0 ? $this->data['site_settings']->site_radius : '10'; 
+        }
+        
+        $this->db->having(['distance <=' => $distanceEnd, 'distance >=' => $distanceStart]);
+        $this->db->where(['mem_type'=> 'vendor', 'mem_status'=> '1', 'mem_verified'=> '1']);
+        $nearby_vendors = $this->db->get()->result();
+
+        $vendors = [];
+        foreach($nearby_vendors as $key => $vendor):
+            #CHECK IF WALK-IN FACILITY AND SET FACILITY HOURS
+            $facilityCheck = $this->master->num_rows('mem_facility_hours', ['mem_id'=> $vendor->mem_id]);
+            if($vendor->mem_company_walkin_facility == 'yes' && $facilityCheck == 0)
+                continue;
+            
+            # CHECK IF VENDOR ALLOW SERVICE IN REQUIRED DISTANCE
+            if($vendor->mem_travel_radius >= $vendor->distance):
+                # CHECK IF USER PROVIDING ALL REQUIRED SERVICES
+                $service_check = vendor_service_check($vendor->mem_id, $selections['selected_service'], $selections['qty']);
+                if($service_check['return']):
+                    $vendor->estimated_price = $service_check['estimated_price'];
+                    # PRICE RANGES
+                    if(isset($params['price']))
+                    {
+                        $priceIndexes = explode(';', $params['price']);
+                        $priceStart = $priceIndexes[0];
+                        $priceEnd   = $priceIndexes[1];
+                        if($service_check['estimated_price'] >= $priceStart && $service_check['estimated_price'] <= $priceEnd)
+                        {
+                            $vendors[] = $vendor;
+                        }
+                    }
+                    else
+                    {
+                        $vendors[] = $vendor;
+                    }
+
+                endif;
+            endif;
+        endforeach;
+
+        #SORT CHEAPEST FIRST
+        usort($vendors, function($first,$second){
+            return $first->estimated_price > $second->estimated_price;
+        });
+
+        return $vendors;
+    }
+
     function get_members_by_order($where = '', $start = '', $offset = '', $order_field = 'mem_id', $order_by = '')
     {
 

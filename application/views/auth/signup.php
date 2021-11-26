@@ -29,8 +29,8 @@
                             <h2 class="heading"> <?= $as == 'Vendor' ?  $content['form_heading2'] :  $content['form_heading1']; ?></h2>
                             <p>Already have an account? <a href="<?= base_url('signin') ?>" class="semi">Sign in</a></p>
                             <div class="social_btn">
-                                <button type="button" class="site_btn gm_btn"><img src="<?= base_url('assets/images/google-icon.svg') ?>" alt=""> Sign up with google</button>
-                                <button type="button" class="site_btn fb_btn"><img src="<?= base_url('assets/images/facebook-icon.svg') ?>" alt=""> Sign up with facebook</button>
+                                <button type="button" onclick="location.href = '<?= site_url('google-login'); ?>'" class="site_btn gm_btn"><img src="<?= base_url('assets/images/google-icon.svg') ?>" alt=""> Sign up with google</button>
+                                <button type="button" onclick="location.href = '<?= site_url('facebook-login'); ?>'" class="site_btn fb_btn"><img src="<?= base_url('assets/images/facebook-icon.svg') ?>" alt=""> Sign up with facebook</button>
                             </div>
                             <div class="or">or</div>
                             <div class="logBlk">

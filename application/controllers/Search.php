@@ -73,7 +73,12 @@ class Search extends MY_Controller
 
     public function advance_search_vendors(){
         if($this->input->post()){
-            pr($this->input->post());
+            $selections = $this->session->selection;
+            $this->data['vendors'] = $vendors = $this->member_model->get_nearby_vendors_advanced($selections, $this->input->post());
+            $this->load->view('pages/search-quotes', $this->data, false);
+            // $html = '';
+            // $html = 
+            // echo json_encode(['status'=> true, 'html'=> ]);
         }
     }
 

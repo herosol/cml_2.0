@@ -73,6 +73,11 @@ $route['reset/(:any)']    = 'index/reset/$1';
 $route['reset-password']  = 'index/reset_password';
 $route['resend-email']    = 'index/resend_email';
 $route['verification/(:any)'] = 'index/verification/$1';
+
+$route['facebook-login']    = 'index/facebook_login';
+$route['facebook-callback'] = 'index/facebook_callback';
+$route['google-login']      = 'index/google_login';
+$route['google-callback']   = 'index/google_callback';
 # VENDOR PAGES
 $route['vendor/dashboard']  = 'vendor/dashboard';
 $route['vendor/notifications']     = 'vendor/notifications';

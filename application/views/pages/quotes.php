@@ -22,43 +22,43 @@
                             <form id="searchForm">
                                 <div class="in_blk">
                                     <h6>Zip Code</h6>
-                                    <input type="text" name="" id="" class="text_box" placeholder="eg: BL0 0WY" value="BL0 0WY" readonly>
+                                    <input type="text" class="text_box" placeholder="eg: BL0 0WY" value="BL0 0WY" readonly>
                                 </div>
                                 <div class="in_blk">
                                     <h6>Price</h6>
-                                    <input type="text" name="" id="price" value="">
+                                    <input type="text" name="price" id="price" value="">
                                 </div>
                                 <div class="in_blk">
                                     <h6>Distance <small>(miles)</small></h6>
-                                    <input type="text" name="" id="distance" value="">
+                                    <input type="text" name="distance" id="distance" value="">
                                 </div>
                                 <div class="in_blk">
                                     <h6>Rating</h6>
                                     <ul class="ctg_lst rating_st">
                                         <li>
                                             <label for="star_four_five">
-                                                <input type="radio" class="rating" id="star_four_five" name="star_rating">
+                                                <input type="radio" class="rating" id="star_four_five" name="star_rating" value="4.5">
                                                 <span class="rateYo" data-rateyo-rating="4.5"></span>
                                                 4.5 & up
                                             </label>
                                         </li>
                                         <li>
                                             <label for="star_four">
-                                                <input type="radio" class="rating" id="star_four" name="star_rating">
+                                                <input type="radio" class="rating" id="star_four" name="star_rating" value="4">
                                                 <span class="rateYo" data-rateyo-rating="4"></span>
                                                 4.0 & up
                                             </label>
                                         </li>
                                         <li>
                                             <label for="star_three_five">
-                                                <input type="radio" class="rating" id="star_three_five" name="star_rating">
+                                                <input type="radio" class="rating" id="star_three_five" name="star_rating" value="3.5">
                                                 <span class="rateYo" data-rateyo-rating="3.5"></span>
                                                 3.5 & up
                                             </label>
                                         </li>
                                         <li>
                                             <label for="star_three">
-                                                <input type="radio" class="rating" id="star_three" name="star_rating">
+                                                <input type="radio" class="rating" id="star_three" name="star_rating" value="3">
                                                 <span class="rateYo" data-rateyo-rating="3"></span>
                                                 3.0 & up
                                             </label>
@@ -72,8 +72,9 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col col2">
+                    <div class="col col2" id=quotes-section>
                         <div id="quote_blk" class="blk">
+                            <input type="hidden" value="<?=count($vendors)?>" id="total-vendors" />
                             <?php if (empty($vendors)) : ?>
                                 <div class="srch_blk">
                                     <h5>No quote available.</h5>
@@ -135,13 +136,19 @@
 
 
         <script type="text/javascript">
-            var total = '<?= count($vendors) ?>';
-            var size_quotes = $(".quotes .srch_blk").length;
-            var append_size = 4;
-            var x = 4;
-            $(document).ready(function() {
+            var x,size_quotes, append_size, total;
+            function loadQuotes()
+            {
+                total = $("#total-vendors").val();
+                size_quotes = $(".quotes .srch_blk").length;
+                append_size = 4;
+                x = 4;
                 $('.quotes .srch_blk:lt(' + x + ')').show();
+            }
+            $(document).ready(function() {
+                loadQuotes();
             });
+
             const loadMore = () => {
                 x = (x + append_size <= size_quotes) ? x + append_size : size_quotes;
                 $('.quotes .srch_blk:lt(' + x + ')').show();
@@ -230,13 +237,10 @@
                         url: base_url + 'search/advance_search_vendors',
                         type: "POST",
                         data: $.param(formData),
-                        success: function (rs) {
-                            // let data = JSON.parse(rs);
-                            // $('#model_records').html(data.html);
-                            // if(data.total < 2)
-                            //     $('#total_records').html(`${data.total} Result Available`);
-                            // else
-                            //     $('#total_records').html(`${data.total} Results Available`);
+                        dataType: 'html',
+                        success: function (html) {
+                            $('#quotes-section').html(html);
+                            loadQuotes();
                         },
                         error: function (data) {
                             console.log(data);
