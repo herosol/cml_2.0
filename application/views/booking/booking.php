@@ -924,17 +924,6 @@
                                     </div>
                                 </fieldset>
                             </div>
-                            <div class="br"></div>
-                            <div class="blk find_blk">
-                                <div class="icon"><img src="<?= base_url('assets/images/vector-support.svg') ?>" alt=""></div>
-                                <div class="txt">
-                                    <h4>Can't find your item?</h4>
-                                    <p>Our team will happily help you.</p>
-                                </div>
-                                <div class="btn_blk">
-                                    <a href="<?= base_url('contact') ?>" class="site_btn light">Contact us</a>
-                                </div>
-                            </div>
                         </div>
                         <div class="col col3">
                             <div class="estimate_blk blk scrollbar">
@@ -1077,6 +1066,24 @@
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmqmsf3pVEVUoGAmwerePWzjUClvYUtwM&libraries=geometry,places&ext=.js"></script>
         <script src="https://js.stripe.com/v2/"></script>
         <script>
+            $(document).ready(function(){
+                $('a').click(function(){
+                    let url = $(this).attr('href');
+                    let shouldAllow = ['javascript:void(0)', undefined, ''];
+                    if(!shouldAllow.includes(url))
+                    {
+                        let answer = confirm("If you leave this page, you will have to repeat all the process again from start. Click Ok to leave!");
+                        if (answer)
+                        {
+                            document.location.href = url;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                });
+            });
             <?php if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') : ?>
                 var pickupDeliveryCharges = '<?= price_format($vendor->mem_charges_per_miles * 2) ?>';
             <?php else : ?>
@@ -1132,7 +1139,12 @@
                             delivery_from.removeClass('error');
                         }
                         if (!check)
+                        {
+                            $('html, body').animate({
+                                scrollTop: $(".error").eq(0).offset().top
+                            }, 500);
                             return false;
+                        }
                     }
                     if (currBtn.hasClass('2-step')) {
                         let pickdrop = '<?= $selections['pick-or-facility'] ?>';
@@ -1223,7 +1235,13 @@
                             }
                         }
                         if (!check)
+                        {
+                            alert();
+                            $('html, body').animate({
+                                scrollTop: $(".error").first().offset().top-30
+                            }, 2000);
                             return false;
+                        }
                         $(".estimate_blk").addClass("hidden");
                         $(".help_blk").removeClass("hidden");
                         $("#estimate_btn_blk").addClass("hidden");
@@ -1237,6 +1255,7 @@
                         nextStep = currStep.next("fieldset");
                         currStep.hide();
                         nextStep.fadeIn();
+                        $(window).scrollTop(0);
                     } else {
                         return false;
                     }
@@ -1250,6 +1269,7 @@
                     prevStep = currStep.prev("fieldset");
                     currStep.hide();
                     prevStep.fadeIn();
+                    $(window).scrollTop(0);
                     $(".help_blk").addClass("hidden");
                     $(".estimate_blk").removeClass("hidden");
                     $("#estimate_btn_blk").removeClass("hidden");
