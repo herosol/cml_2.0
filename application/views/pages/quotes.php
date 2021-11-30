@@ -22,7 +22,7 @@
                             <form id="searchForm">
                                 <div class="in_blk">
                                     <h6>Zip Code</h6>
-                                    <input type="text" class="text_box" placeholder="eg: BL0 0WY" value="BL0 0WY" readonly>
+                                    <input type="text" class="text_box"  value="<?=$selections['zipcode']?>" readonly>
                                 </div>
                                 <div class="in_blk">
                                     <h6>Price</h6>
@@ -83,12 +83,12 @@
                                 <div class="quotes">
                                     <?php foreach ($vendors as $key => $row) : ?>
                                         <div class="srch_blk" style="display: none;">
-                                            <div class="icon"><img src="<?= get_site_image_src("members", $row->mem_image, 'thumb_'); ?>" alt=""></div>
+                                            <div class="icon"><img data-original="<?= get_site_image_src("members", $row->mem_image, 'thumb_'); ?>" src="<?=base_url('assets/images/loading.gif')?>" alt="" lazy></div>
                                             <div class="txt">
                                                 <h5><?= $row->mem_fname . ' ' . $row->mem_lname ?></h5>
                                                 <div class="rating">
                                                     <div class="rateYo" data-rateyo-rating="<?= get_mem_avg_rating($row->mem_id) ?>"></div>
-                                                    <strong>4.1<em>286 ratings</em></strong>
+                                                    <strong><?= get_mem_avg_rating($row->mem_id) ?><em><?= count_mem_ratings($row->mem_id) ?> <?= count_mem_ratings($row->mem_id) > 1 ? 'ratings' : 'rating' ?></em></strong>
                                                 </div>
                                                 <div class="price">Estimated Price<strong>£<?= $row->estimated_price ?></strong></div>
                                                 <?php if ($row->mem_company_pickdrop == 'yes') : ?>
@@ -113,17 +113,14 @@
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <?php if (count($vendors) > 8) : ?>
+                        <?php if (count($vendors) > 1) : ?>
                             <div class="btn_blk form_btn text-center more-less-quotes">
                                 <button onclick="loadMore();" class="site_btn light">More Quotes <i class="fi-arrow-right"></i></button>
                             </div>
                         <?php endif; ?>
                     </div>
                     <div class="col col3">
-                        <div id="map_blk" class="blk">
-                            <button type="button" class="cross_btn"></button>
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4855.859527591884!2d-79.3863699277487!3d43.641690188092966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b34d68bf33a9b%3A0x15edd8c4de1c7581!2sCN%20Tower!5e0!3m2!1sen!2s!4v1634128919096!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                        </div>
+                        <div id="map_blk" class="blk"></div>
                     </div>
                 </div>
                 <div id="filter_btn_blk" class="btn_blk">
@@ -141,8 +138,8 @@
             {
                 total = $("#total-vendors").val();
                 size_quotes = $(".quotes .srch_blk").length;
-                append_size = 4;
-                x = 4;
+                append_size = 1;
+                x = 1;
                 $('.quotes .srch_blk:lt(' + x + ')').show();
             }
             $(document).ready(function() {
@@ -153,19 +150,35 @@
                 x = (x + append_size <= size_quotes) ? x + append_size : size_quotes;
                 $('.quotes .srch_blk:lt(' + x + ')').show();
                 if (x == total) {
-                    $('.more-less-quotes').empty().append(`<button onclick="showLess();" class="webBtn lightBtn">Show Less <i class="fi-arrow-right"></i></button>`);
+                    $('.more-less-quotes').empty().append(`<button onclick="showLess();" class="site_btn light">Show Less <i class="fi-arrow-right"></i></button>`);
                 }
             }
             const showLess = () => {
-                x = 4;
+                x = 1;
                 $('.quotes .srch_blk').not(':lt(' + x + ')').hide();
-                $('.more-less-quotes').empty().append(`<button onclick="loadMore();" class="webBtn lightBtn">More Quotes <i class="fi-arrow-right"></i></button>`);
+                $('.more-less-quotes').empty().append(`<button onclick="loadMore();" class="site_btn light">More Quotes <i class="fi-arrow-right"></i></button>`);
+                window.scrollTo({top: 0, behavior: 'smooth'});
             }
         </script>
         <!-- Ion Slider -->
         <link type="text/css" rel="stylesheet" href="<?= base_url('assets/css/ion.slider.min.css') ?>">
         <script type="text/javascript" src="<?= base_url('assets/js/ion.slider.min.js') ?>"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmqmsf3pVEVUoGAmwerePWzjUClvYUtwM&libraries=geometry,places&ext=.js"></script>
         <script type="text/javascript">
+            var locations = <?=$locations?>;
+
+            var map, bounds, startLat = locations[0][1], startLng = locations[0][2];
+            var markers = [];
+            var infowindows = [];
+            var haveGeoLocation = false;
+            var startLatLng = new google.maps.LatLng(startLat, startLng);
+            var user_icon = {
+                    url: base_url + "assets/images/user_marker.png", // url
+                    scaledSize: new google.maps.Size(50, 50), // scaled size
+                    origin: new google.maps.Point(0, 0), // origin
+                    anchor: new google.maps.Point(25, 50) // anchor
+                };
+
             $(window).on("load", function() {
                 $('#price').ionRangeSlider({
                     skin: 'square',
@@ -183,7 +196,7 @@
                 $('#distance').ionRangeSlider({
                     skin: 'square',
                     min: 1,
-                    max: 200,
+                    max: 50,
                     type: 'double',
                     prettify: function(num) {
                         return num;
@@ -234,16 +247,37 @@
                     ajaxSearch = true;
                     let formData = $("#searchForm").serializeArray();
                     $.ajax({
+                        async: false,
                         url: base_url + 'search/advance_search_vendors',
                         type: "POST",
                         data: $.param(formData),
-                        dataType: 'html',
-                        success: function (html) {
-                            $('#quotes-section').html(html);
+                        dataType: 'json',
+                        success: function (res) {
+                            $('#quotes-section').html(res.html);
                             loadQuotes();
+                            $("img[lazy]").lazyload();
+                            $('.rateYo').rateYo({
+                                fullStar: true,
+                                readOnly: true,
+                                normalFill: '#ddd',
+                                ratedFill: '#ffc000',
+                                starWidth: '14px',
+                                spacing: '2px'
+                            });
+                            locations = res.locations;
+                            if(locations.length > 0)
+                            {
+                                $('#map_blk').show();
+                                startLat = locations[0][1];
+                                startLng = locations[0][2];
+                                startLatLng = new google.maps.LatLng(startLat, startLng);
+                                init();
+                            }
+                            else{
+                                $('#map_blk').hide();
+                            }
                         },
                         error: function (data) {
-                            console.log(data);
                         },
                         complete: function (data) {
                             ajaxSearch = false;
@@ -255,6 +289,117 @@
                 }
                 // END SEARCH BLOCK
             });
+
+
+            function init() {
+                map = new google.maps.Map(document.getElementById('map_blk'), {
+                    center: startLatLng,
+                    zoom: 10
+                });
+                bounds = new google.maps.LatLngBounds();
+                searchAreaMarker = new google.maps.Marker({
+                    position: startLatLng,
+                    map: map,
+                    draggable: false,
+                    icon: user_icon,
+                    animation: google.maps.Animation.DROP,
+                    title: 'My Location'
+                });
+                setMarkers(map, locations);
+            }
+
+            function setMarkers(map, locations) {
+                closeInfos();
+                closeMarks();
+                markers = [];
+                infowindows = [];
+                if (locations.length > 0)
+                {
+                    for (var i = 0; i < locations.length; i++) {
+                        
+                        var location = locations[i];
+                        var title = location[0],
+                        lat = location[1],
+                        lng = location[2],
+                        content = location[4];
+                        var latlngset = new google.maps.LatLng(lat, lng);
+                        
+                        markers[i] = new google.maps.Marker({
+                            position: latlngset,
+                            map: map,
+                            icon: user_icon,
+                            title: title,
+                        });
+
+                        infowindows[i] = new google.maps.InfoWindow({
+                            content: content
+                        });
+                        google.maps.event.addListener(markers[i], 'click', (function (inneri) {
+                            return function () {
+                                closeInfos();
+                                infowindows[inneri].open(map, markers[inneri]);
+                            }
+                        })(i));
+                        google.maps.event.addListener(infowindows[i], 'domready', function () {
+                            var iwOuter = $('.gm-style-iw');
+                            var iwBackground = iwOuter.prev();
+                            // Remove the background shadow DIV
+                            iwBackground.children(':nth-child(2)').css({'display': 'none'});
+                            // Remove the white background DIV
+                            iwBackground.children(':nth-child(4)').css({'display': 'none'});
+                            iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(72, 181, 233, 0.6) 0px 1px 6px', 'z-index': '1'});
+                            // Moves the shadow of the arrow 76px to the left margin 
+                            iwBackground.children(':nth-child(1)').attr('style', function (i, s) {
+                                return s + 'margin-top: 2px !important;'
+                            });
+                            // Moves the arrow 76px to the left margin 
+                            iwBackground.children(':nth-child(3)').attr('style', function (i, s) {
+                                return s + 'margin-top: 2px !important;'
+                            });
+                            iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(72, 181, 233, 0.6) 0px 1px 6px', 'z-index': '1'});
+                            var iwCloseBtn = iwOuter.next();
+                            // Apply the desired effect to the close button
+                            iwCloseBtn.css({
+                                opacity: '1', // by default the close button has an opacity of 0.7
+                                right: '28px', top: '3px', // button repositioning
+                                border: '7px solid #fff', // increasing button border and new color
+                                'border-radius': '13px', // circular effect
+                                'padding': '6px', // padding
+                                'box-shadow': '0 0 5px #3990B9', // 3D effect to highlight the button
+                                'z-index': '999999', // z-index
+                            });
+                            // The API automatically applies 0.7 opacity to the button after the mouseout event.
+                            // This function reverses this event to the desired value.
+                            iwCloseBtn.mouseout(function () {
+                                $(this).css({opacity: '1'});
+                            });
+                        });
+                        google.maps.event.addListener(map, 'click', function () {
+                            closeInfos();
+                        });
+                    }
+                }
+            }
+
+            function closeInfos() {
+                if (infowindows.length > 0) {
+                    for (var i = 0; i < infowindows.length; i++)
+                    {
+                        infowindows[i].close();
+                    }
+                }
+            }
+
+            function closeMarks() {
+                if (markers.length > 0) {
+                    for (var i = 0; i < markers.length; i++)
+                    {
+                        markers[i].setMap(null);
+                    }
+                }
+            }
+
+            google.maps.event.addDomListener(window, 'load', init);
         </script>
     </main>
     <?php $this->load->view('includes/footer'); ?>

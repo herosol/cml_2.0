@@ -43,6 +43,7 @@ class Member_model extends CRUD_Model
         $nearby_vendors = $this->db->get()->result();
 
         $vendors = [];
+        $locations = [];
         foreach($nearby_vendors as $key => $vendor):
             #CHECK IF WALK-IN FACILITY AND SET FACILITY HOURS
             $facilityCheck = $this->master->num_rows('mem_facility_hours', ['mem_id'=> $vendor->mem_id]);
@@ -55,6 +56,13 @@ class Member_model extends CRUD_Model
                 $service_check = vendor_service_check($vendor->mem_id, $selections['selected_service'], $selections['qty']);
                 if($service_check['return']):
                     $vendor->estimated_price = $service_check['estimated_price'];
+                    $locations[] = [
+                        $vendor->mem_business_zip.' ('. round($vendor->distance, 2) . ' miles away)',
+                        $vendor->mem_map_lat,
+                        $vendor->mem_map_lng,
+                        '',
+                        $vendor->mem_fname.' '.$vendor->mem_lname.' '. round($vendor->distance, 2) . ' miles away'.' at '.$vendor->mem_business_address. ' ('. $vendor->mem_business_zip .')'
+                    ];
                     $vendors[] = $vendor;    
                 endif;
             endif;
@@ -65,7 +73,7 @@ class Member_model extends CRUD_Model
             return $first->estimated_price > $second->estimated_price;
         });
 
-        return $vendors;
+        return ['vendors'=> $vendors, 'locations'=> json_encode($locations)]; //json_encode for map locations   
     }
 
     function get_nearby_vendors_advanced($selections, $params)
@@ -98,6 +106,7 @@ class Member_model extends CRUD_Model
         $nearby_vendors = $this->db->get()->result();
 
         $vendors = [];
+        $locations = [];
         foreach($nearby_vendors as $key => $vendor):
             #CHECK IF WALK-IN FACILITY AND SET FACILITY HOURS
             $facilityCheck = $this->master->num_rows('mem_facility_hours', ['mem_id'=> $vendor->mem_id]);
@@ -118,11 +127,25 @@ class Member_model extends CRUD_Model
                         $priceEnd   = $priceIndexes[1];
                         if($service_check['estimated_price'] >= $priceStart && $service_check['estimated_price'] <= $priceEnd)
                         {
+                            $locations[] = [
+                                $vendor->mem_business_zip.' ('. round($vendor->distance, 2) . ' miles away)',
+                                $vendor->mem_map_lat,
+                                $vendor->mem_map_lng,
+                                '',
+                                $vendor->mem_fname.' '.$vendor->mem_lname.' '. round($vendor->distance, 2) . ' miles away'.' at '.$vendor->mem_business_address. ' ('. $vendor->mem_business_zip .')'
+                            ];
                             $vendors[] = $vendor;
                         }
                     }
                     else
                     {
+                        $locations[] = [
+                            $vendor->mem_business_zip.' ('. round($vendor->distance, 2) . ' miles away)',
+                            $vendor->mem_map_lat,
+                            $vendor->mem_map_lng,
+                            '',
+                            $vendor->mem_fname.' '.$vendor->mem_lname.' '. round($vendor->distance, 2) . ' miles away'.' at '.$vendor->mem_business_address. ' ('. $vendor->mem_business_zip .')'
+                        ];
                         $vendors[] = $vendor;
                     }
 
@@ -135,7 +158,7 @@ class Member_model extends CRUD_Model
             return $first->estimated_price > $second->estimated_price;
         });
 
-        return $vendors;
+        return ['vendors'=> $vendors, 'locations'=> $locations];
     }
 
     function get_members_by_order($where = '', $start = '', $offset = '', $order_field = 'mem_id', $order_by = '')

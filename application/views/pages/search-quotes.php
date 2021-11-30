@@ -8,12 +8,12 @@
         <div class="quotes">
             <?php foreach ($vendors as $key => $row) : ?>
                 <div class="srch_blk" style="display: none;">
-                    <div class="icon"><img src="<?= get_site_image_src("members", $row->mem_image, 'thumb_'); ?>" alt=""></div>
+                    <div class="icon"><img data-original="<?= get_site_image_src("members", $row->mem_image, 'thumb_'); ?>" src="<?=base_url('assets/images/loading.gif')?>" alt="" lazy></div>
                     <div class="txt">
                         <h5><?= $row->mem_fname . ' ' . $row->mem_lname ?></h5>
                         <div class="rating">
                             <div class="rateYo" data-rateyo-rating="<?= get_mem_avg_rating($row->mem_id) ?>"></div>
-                            <strong>4.1<em>286 ratings</em></strong>
+                            <strong><?= get_mem_avg_rating($row->mem_id) ?><em><?= count_mem_ratings($row->mem_id) ?> <?= count_mem_ratings($row->mem_id) > 1 ? 'ratings' : 'rating' ?></em></strong>
                         </div>
                         <div class="price">Estimated Price<strong>£<?= $row->estimated_price ?></strong></div>
                         <?php if ($row->mem_company_pickdrop == 'yes') : ?>
@@ -38,7 +38,7 @@
         </div>
     <?php endif; ?>
 </div>
-<?php if (count($vendors) > 8) : ?>
+<?php if (count($vendors) > 1) : ?>
     <div class="btn_blk form_btn text-center more-less-quotes">
         <button onclick="loadMore();" class="site_btn light">More Quotes <i class="fi-arrow-right"></i></button>
     </div>

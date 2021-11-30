@@ -804,9 +804,21 @@ function get_mem_avg_rating($mem_id)
     $CI = get_instance();
     $CI->db->select('AVG(rating) as total')
         ->where('mem_id', $mem_id);
+        // ->where('parent_id', NULL);
     $query = $CI->db->get('reviews');
     $total = $query->row()->total;
     return round(floatval($total), 1);
+}
+
+function count_mem_ratings($mem_id)
+{
+    $CI = get_instance();
+    $CI->db->select('count(*) as total')
+        ->where('mem_id', $mem_id);
+        // ->where('parent_id', NULL);
+    $query = $CI->db->get('reviews');
+    $total = $query->row()->total;
+    return intval($total);
 }
 
 function get_reviews($ref_id, $ref_type = 'booking')

@@ -64,7 +64,9 @@ class Search extends MY_Controller
             $this->data['content'] = unserialize($data->code);
             $this->data['meta_desc'] = json_decode($meta->content);
             $this->data['selections'] = $selections = $this->session->selection;
-            $this->data['vendors'] = $this->member_model->get_nearby_vendors($selections);
+            $fetch = $this->member_model->get_nearby_vendors($selections);
+            $this->data['vendors']   = $fetch['vendors'];
+            $this->data['locations'] = $fetch['locations'];
             $this->load->view('pages/quotes', $this->data);
         } else {
             show_404();
@@ -74,11 +76,14 @@ class Search extends MY_Controller
     public function advance_search_vendors(){
         if($this->input->post()){
             $selections = $this->session->selection;
-            $this->data['vendors'] = $vendors = $this->member_model->get_nearby_vendors_advanced($selections, $this->input->post());
-            $this->load->view('pages/search-quotes', $this->data, false);
-            // $html = '';
-            // $html = 
-            // echo json_encode(['status'=> true, 'html'=> ]);
+            $fetch = $vendors = $this->member_model->get_nearby_vendors_advanced($selections, $this->input->post());
+            $this->data['vendors'] = $fetch['vendors'];
+            echo json_encode(
+                ['status'=> true,
+                'html'=> $this->load->view('pages/search-quotes', $this->data, true),
+                'locations'=> $fetch['locations']
+                ]
+            );
         }
     }
 
