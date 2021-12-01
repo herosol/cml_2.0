@@ -76,8 +76,8 @@
                                         <div class="txt">
                                             <h5><?= $vendor->mem_fname . ' ' . $vendor->mem_lname ?></h5>
                                             <div class="rating">
-                                                <div class="rateYo" data-rateyo-rating="<?= get_mem_avg_rating($vendor->mem_id) ?>"></div>
-                                                <strong>4.1<em>286 ratings</em></strong>
+                                                <div class="rateYo" data-rateyo-rating="<?= get_mem_avg_rating($vendor_id) ?>"></div>
+                                                <strong><?= get_mem_avg_rating($vendor_id) ?><em><?= count_mem_ratings($vendor_id) ?> <?= count_mem_ratings($vendor_id) > 1 ? 'ratings' : 'rating' ?></em></strong>
                                             </div>
                                             <?php if ($vendor->mem_company_pickdrop == 'yes') : ?>
                                                 <p>Pickup & Delivery Service Available</p>
@@ -105,14 +105,14 @@
                                     </div>
                                     <?php //if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') : 
                                     ?>
-                                    <h4 class="subheading"><?= $content['step2_heading'] ?></h4>
-                                    <div class="blk">
+                                    <h4 class="subheading pickupAndDeliveryInfo hidden"><?= $content['step2_heading'] ?></h4>
+                                    <div class="blk pickupAndDeliveryInfo hidden">
                                         <div class="form_row row">
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <h6>Collection Date</h6>
                                                 <div class="form_blk">
                                                     <select name="collection_date" id="collection_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'collection_time')">
-                                                        <?= open_days_options($open_days, $selections['place-order']['collection_date']) ?>
+                                                        <?= open_days_options($open_days) ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -120,7 +120,7 @@
                                                 <h6>Collection Time</h6>
                                                 <div class="form_blk">
                                                     <select name="collection_time" id="collection_time" class="text_box selectpicker" data-container="body">
-                                                        <?= oneHourTimeByGiven($selections['place-order']['collection_time'], $collection_opening, $collection_closing) ?>
+                                                        <?= $coming_day_times ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -142,7 +142,7 @@
                                                 <h6>Delivery Date</h6>
                                                 <div class="form_blk">
                                                     <select name="delivery_date" id="delivery_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'delivery_time')">
-                                                        <?= open_days_options($open_days, $selections['place-order']['delivery_date']) ?>
+                                                        <?= open_days_options($open_days) ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -150,7 +150,7 @@
                                                 <h6>Delivery Time</h6>
                                                 <div class="form_blk">
                                                     <select name="delivery_time" id="delivery_time" class="text_box selectpicker" data-container="body">
-                                                        <?= oneHourTimeByGiven($selections['place-order']['delivery_time'], $delivery_opening, $delivery_closing) ?>
+                                                        <?= $coming_day_times ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -174,8 +174,8 @@
                                     </div>
                                     <?php //endif; 
                                     ?>
-                                    <h4 class="subheading">Address & Info</h4>
-                                    <div class="blk">
+                                    <h4 class="subheading businessAddressInfo">Address & Info</h4>
+                                    <div class="blk businessAddressInfo">
                                         <div class="form_blk" id="businessAdress">
                                             <p><?= $vendor->mem_business_address ?> <br> <?= $vendor->mem_business_city ?> <br> <?= $vendor->mem_business_zip ?></p>
                                         </div>
@@ -260,7 +260,7 @@
                                                     </tr>
                                                     <?php
                                                     $check = 0;
-                                                    foreach (get_sub_services($_activedry_cleaning->id) as $key => $sub_service) :
+                                                    foreach (get_sub_services($dry_cleaning->id) as $key => $sub_service) :
                                                         $row = sub_service_price($sub_service->id, $vendor_id);
                                                         if ($row->price != '' && $row->price != '0' && $row->price != '0.00') :
                                                             $check++;
@@ -300,7 +300,7 @@
                                                     </tr>
                                                     <?php
                                                     $check = 0;
-                                                    foreach (get_sub_services($_activewash_and_iron->id) as $key => $sub_service) :
+                                                    foreach (get_sub_services($wash_and_iron->id) as $key => $sub_service) :
                                                         $row = sub_service_price($sub_service->id, $vendor_id);
                                                         if ($row->price != '' && $row->price != '0' && $row->price != '0.00') :
                                                             $check++;
@@ -340,7 +340,7 @@
                                                     </tr>
                                                     <?php
                                                     $check = 0;
-                                                    foreach (get_sub_services($_activeiron_only->id) as $key => $sub_service) :
+                                                    foreach (get_sub_services($iron_only->id) as $key => $sub_service) :
                                                         $row = sub_service_price($sub_service->id, $vendor_id);
                                                         if ($row->price != '' && $row->price != '0' && $row->price != '0.00') :
                                                             $check++;
@@ -380,7 +380,7 @@
                                                     </tr>
                                                     <?php
                                                     $check = 0;
-                                                    foreach (get_sub_services($_activebuly_items->id) as $key => $sub_service) :
+                                                    foreach (get_sub_services($buly_items->id) as $key => $sub_service) :
                                                         $row = sub_service_price($sub_service->id, $vendor_id);
                                                         if ($row->price != '' && $row->price != '0' && $row->price != '0.00') :
                                                             $check++;
@@ -421,7 +421,7 @@
                                                     </tr>
                                                     <?php
                                                     $check = 0;
-                                                    foreach (get_sub_services($_activedeals->id) as $key => $sub_service) :
+                                                    foreach (get_sub_services($deals->id) as $key => $sub_service) :
                                                         $row = sub_service_price($sub_service->id, $vendor_id);
                                                         if ($row->price != '' && $row->price != '0' && $row->price != '0.00') :
                                                             $check++;
@@ -963,44 +963,34 @@
                                                     <hr>
                                                 </td>
                                             </tr>
-                                            <?php if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') : ?>
-                                                <tr>
-                                                    <td colspan="2">Minimum Order:</td>
-                                                    <td class="price text-right">£<?= price_format($vendor->mem_charges_min_order) ?></td>
-                                                </tr>
-                                            <?php endif; ?>
-                                            <?php
-                                            $pickup = 0;
-                                            if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') :
-                                                $pickup = price_format($vendor->mem_charges_per_miles * 2);
-                                            ?>
-                                                <tr>
-                                                    <td colspan="2">Pickup & Delivery Charges:</td>
-                                                    <td class="price text-right">£<?= price_format($vendor->mem_charges_per_miles * 2) ?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" class="color">Free Pickup Service Over:</td>
-                                                    <td class="price text-right">£<?= price_format($vendor->mem_charges_free_over) ?></td>
-                                                </tr>
-                                            <?php endif; ?>
+                                            <tr class="hidden minimum_order">
+                                                <td colspan="2">Minimum Order:</td>
+                                                <td class="price text-right">£<?= price_format($vendor->mem_charges_min_order) ?></td>
+                                            </tr>
+                                            <tr class="hidden pickdrop_charges">
+                                                <td colspan="2">Pickup & Delivery Charges:</td>
+                                                <td class="price text-right">£<?= price_format($vendor->mem_charges_per_miles * 2) ?></td>
+                                            </tr>
+                                            <tr class="hidden freePickupServiceOver">
+                                                <td colspan="2" class="color">Free Pickup Service Over:</td>
+                                                <td class="price text-right">£<?= price_format($vendor->mem_charges_free_over) ?></td>
+                                            </tr>
                                             <tr>
                                                 <td colspan="2" class="color">Items Total:</td>
                                                 <th class="price text-right" id="items-total" data-total="<?= price_format($estimated_total) ?>">£<?= price_format($estimated_total) ?></th>
                                             </tr>
                                             <tr>
                                                 <td colspan="3">
-                                                    <?php if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') : ?>
-                                                        <?php if (price_format($estimated_total) > price_format($vendor->mem_charges_free_over)) : ?>
-                                                            <div class="freePickupAndDelivery alert">Free Pickup & Delivery Service</div>
-                                                        <?php else : ?>
-                                                            <div class="freePickupAndDelivery alert" style="display:none"></div>
-                                                        <?php endif; ?>
+                                                    <?php if (price_format($estimated_total) > price_format($vendor->mem_charges_free_over)) : ?>
+                                                        <div class="freePickupAndDelivery alert">Free Pickup & Delivery Service</div>
+                                                    <?php else : ?>
+                                                        <div class="freePickupAndDelivery alert" style="display:none"></div>
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th colspan="2" class="color">Estimated Total:&nbsp;&nbsp;</th>
-                                                <th class="color text-right" id="estimated-total">£<?= price_format($estimated_total + (price_format($estimated_total) > price_format($vendor->mem_charges_free_over) ? 0 : $pickup)) ?></th>
+                                                <th class="color text-right" id="estimated-total" data-total="<?= price_format($estimated_total) ?>">£<?= price_format($estimated_total) ?></th>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1066,6 +1056,28 @@
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmqmsf3pVEVUoGAmwerePWzjUClvYUtwM&libraries=geometry,places&ext=.js"></script>
         <script src="https://js.stripe.com/v2/"></script>
         <script>
+            $(document).on('click', '#usePickAndDropService', (e) => {
+                let pickdrop_charges = $('.pickdrop_charges');
+                let pcharges = '<?= $vendor->mem_charges_per_miles * 2 ?>';
+                if ($(e.target).is(':checked')) {
+                    $('.businessAddressInfo').addClass('hidden');
+                    $('.pickupAndDeliveryInfo').removeClass('hidden');
+                    $('.minimum_order').removeClass('hidden');
+                    $('.freePickupServiceOver').removeClass('hidden');
+                    pickdrop_charges.removeClass('hidden');
+                    calculateEstimatedAmount();
+                    $('#drop-delivery').html('Delivery');
+                } else {
+                    $('.businessAddressInfo').removeClass('hidden');
+                    $('.pickupAndDeliveryInfo').addClass('hidden');
+                    $('.minimum_order').addClass('hidden');
+                    $('.freePickupServiceOver').addClass('hidden');
+                    pickdrop_charges.addClass('hidden');
+                    calculateEstimatedAmount();
+                    $('#drop-delivery').html('Drop off');
+                }
+            });
+
             $(document).ready(function(){
                 $('a').click(function(){
                     let url = $(this).attr('href');
@@ -1484,6 +1496,7 @@
                 var total = 0;
                 let index;
                 let qty;
+                let pickup = $('#usePickAndDropService').is(':checked');
                 $('input[name="selected_service[]"]').each(function() {
                     index = $(this).val();
                     total += parseFloat($(this).data('price')) * parseInt($('#qty-' + index).val());
@@ -1491,17 +1504,26 @@
                 $('#items-total').text(`£${total.toFixed(2)}`);
                 $('#items-total-preview').text(`£${total.toFixed(2)}`);
                 let pickupcharges = '<?= price_format($vendor->mem_charges_free_over) ?>';
-                if (parseFloat(total.toFixed(2)) > parseFloat(pickupcharges)) {
-                    $('.freePickupAndDelivery').html(`Free Pickup & Delivery Service`);
-                    $('.freePickupAndDelivery').fadeIn();
-                    $('#pickup-and-delivery-preview').hide();
-                    $('#estimated-total').text(`£${(parseFloat(total)).toFixed(2)}`);
-                    $('#estimated-total-preview').text(`£${(parseFloat(total)).toFixed(2)}`);
-                } else {
+                if(pickup)
+                {
+                    if (parseFloat(total.toFixed(2)) > parseFloat(pickupcharges)) {
+                        $('.freePickupAndDelivery').html(`Free Pickup & Delivery Service`);
+                        $('.freePickupAndDelivery').fadeIn();
+                        $('#pickup-and-delivery-preview').hide();
+                        $('#estimated-total').text(`£${(parseFloat(total)).toFixed(2)}`);
+                        $('#estimated-total-preview').text(`£${(parseFloat(total)).toFixed(2)}`);
+                    } else {
+                        $('.freePickupAndDelivery').fadeOut();
+                        $('#pickup-and-delivery-preview').show();
+                        $('#estimated-total').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
+                        $('#estimated-total-preview').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
+                    }
+                }
+                else{
                     $('.freePickupAndDelivery').fadeOut();
                     $('#pickup-and-delivery-preview').show();
-                    $('#estimated-total').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
-                    $('#estimated-total-preview').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
+                    $('#estimated-total').text(`£${(parseFloat(total)).toFixed(2)}`);
+                    $('#estimated-total-preview').text(`£${(parseFloat(total)).toFixed(2)}`);
                 }
             }
             /// APPENDING TO FIELDS

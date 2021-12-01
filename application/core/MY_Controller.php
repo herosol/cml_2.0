@@ -164,7 +164,7 @@ class MY_Controller extends CI_Controller {
 
     function if_booking_running()
     {
-        if(!isset($this->session->selections))
+        if(!isset($this->session->selection))
         {
             redirect(base_url(), 'refresh');
         }

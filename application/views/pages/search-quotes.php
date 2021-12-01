@@ -32,13 +32,13 @@
                             <div class="symbol"><img src="<?= base_url() ?>assets/images/vector-wait-cross.svg" alt=""></div>
                         </div>
                     <?php endif; ?>
-                    <a href="<?= base_url() ?>vendor-detail/<?= doEncode($row->mem_id) ?>/<?= doEncode(round($row->distance, 2)) ?>"></a>
+                    <a href="<?= base_url() ?>order-booking/<?= doEncode($row->mem_id) ?>/<?= doEncode(round($row->distance, 2)) ?>"></a>
                 </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>
-<?php if (count($vendors) > 1) : ?>
+<?php if (count($vendors) > 3) : ?>
     <div class="btn_blk form_btn text-center more-less-quotes">
         <button onclick="loadMore();" class="site_btn light">More Quotes <i class="fi-arrow-right"></i></button>
     </div>

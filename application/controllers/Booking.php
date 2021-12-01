@@ -10,24 +10,28 @@ class Booking extends MY_Controller
         $this->load->model('OrderD_model', 'orderd_model');
     }
     
-    function index()
+    function index($mem_id, $miles)
     {
-        $this->if_booking_running();        
+        $this->if_booking_running();  
+        check_valid_id('members', $mem_id, 'mem_id');
+        $mem_id = doDecode($mem_id);
+        $this->data['miles']  = doDecode($miles);
+        $this->data['vendor_id'] = $mem_id;
+
         $meta = $this->page->getMetaContent('booking');
 		$this->data['page_title'] = $meta->page_name;
 		$this->data['slug'] = $meta->slug;
 		$data = $this->page->getPageContent('booking');
-        $this->data['selections'] = $selections = $this->session->selections;
-        $this->data['vendor_id'] = $selections['vendor'];
+        $this->data['selections'] = $selections = $this->session->selection;
         $this->data['services']  = $selections['selected_service'];
         $this->data['qty']       = $qty = $selections['qty'];
         $this->data['zipcode']   = $selections['zipcode'];
         $this->data['facility_hours'] = $facility_hours = $this->master->get_data_row('mem_facility_hours', ['mem_id'=> $this->data['vendor_id']]);
         //VENDOR
-        $this->data['vendor'] = $vendor = $this->member_model->getMember($selections['vendor']);
+        $this->data['vendor'] = $vendor = $this->member_model->getMember($this->data['vendor_id']);
         $this->data['estimated_total'] = 0; 
         foreach($selections['selected_service'] as $index => $value):
-            $row = sub_service_price($value, $selections['vendor']);
+            $row = sub_service_price($value, $this->data['vendor_id']);
             $this->data['estimated_total'] += $row->price*$qty[$index];
         endforeach;
         // OPEN DAYS
@@ -53,6 +57,21 @@ class Booking extends MY_Controller
             $start->modify('+1 day');
         }
         $this->data['open_days'] = $open_days;
+        $coming_date = new DateTime($open_days[0]);
+        $coming_day  = strtolower(date('D', strtotime($coming_date->format('Y-m-d'))));
+
+        $facility_hours = $this->master->get_data_row('mem_facility_hours', ['mem_id' => $mem_id]);
+        $coming_day = strtotime($coming_day);
+        $coming_day = date('D', $coming_day);
+        $coming_day = strtolower($coming_day);
+        $key_opening = $coming_day . '_opening';
+        $key_closing = $coming_day . '_closing';
+
+        $opening_time = $facility_hours->$key_opening;
+        $closing_time = $facility_hours->$key_closing;
+
+        $html = oneHourTimeByGiven('', $opening_time, $closing_time);
+        $this->data['coming_day_times'] = $html;
         //START END SLEECTED DAY TIME
         $day = $selections['place-order']['collection_date'];
         $dayIndex = explode('-', $day);
@@ -199,7 +218,7 @@ class Booking extends MY_Controller
                 $buyer_credits     = $total_buyer_order % 10;
                 #ORDER DATA
                 $order['buyer_id']  = $buyer_id;
-                $order['vendor_id'] = $selections['vendor'];
+                $order['vendor_id'] = $this->data['vendor_id'];
                 $order['searched_zipcode']  = $selections['zipcode'];
                 $order['extra_address_detail'] = $post['extra_address_detail'];
                 $order['address_type']      = $post['address_type'];
@@ -207,7 +226,7 @@ class Booking extends MY_Controller
                 $order['location_map_long'] = $selections['long'];
                 $order['order_price'] = 0; 
                 foreach($post['selected_service'] as $key => $value):
-                    $row = sub_service_price($value, $selections['vendor']);
+                    $row = sub_service_price($value, $this->data['vendor_id']);
                     $order['order_price'] += $row->price*($post['qty'][$key]);
                 endforeach;
                 if($selections['place-order']['use_pickdrop'] && $selections['place-order']['use_pickdrop'] == 'on')
@@ -259,7 +278,7 @@ class Booking extends MY_Controller
                 {
                     foreach($post['selected_service'] as $key => $value):
                         $order_detail = [];
-                        $row = get_sub_service($value, $selections['vendor']);
+                        $row = get_sub_service($value, $this->data['vendor_id']);
                         $order_detail['order_id']           = $order_id;
                         $order_detail['sub_service_id']     = $value;
                         $order_detail['quantity']           = $post['qty'][$key];
@@ -298,7 +317,7 @@ class Booking extends MY_Controller
                     $order_invoice['payment_status'] = 'paid';
                     $this->master->save('order_invoices', $order_invoice);
                     # ORDER LOG
-                    $this->master->save('order_logs', ['mem_id'=> $selections['vendor'], 'order_id'=> $order_id, 'mem_type'=> 'vendor', 'status'=> 'dirty']);
+                    $this->master->save('order_logs', ['mem_id'=> $this->data['vendor_id'], 'order_id'=> $order_id, 'mem_type'=> 'vendor', 'status'=> 'dirty']);
                     $this->master->save('order_logs', ['mem_id'=> $buyer_id, 'order_id'=> $order_id, 'mem_type'=> 'buyer', 'status'=> 'dirty']);
                 }
                 if ($order_id > 0)
