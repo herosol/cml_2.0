@@ -36,7 +36,7 @@
                         foreach ($promos as $promo) { ?>
                             <div class="col">
                                 <div class="promo_blk">
-                                    <div class="icon"><img src="<?= getImageSrc(UPLOAD_PATH . "promos/", $promo->image) ?>" alt=""></div>
+                                    <div class="icon"><img data-original="<?= getImageSrc(UPLOAD_PATH . "promos/", $promo->image) ?>" src="<?=base_url('assets/images/loading.gif')?>" alt="" lazy></div>
                                     <div class="txt">
                                         <h4><?= $promo->name ?></h4>
                                         <p><?= $promo->tagline ?></p>

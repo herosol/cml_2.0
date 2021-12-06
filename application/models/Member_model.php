@@ -78,15 +78,10 @@ class Member_model extends CRUD_Model
 
     function get_nearby_vendors_advanced($selections, $params)
     {
-        $this->db->from($this->table_name);
-        $this->db->select('*, ( 3959 * acos( cos( radians("'.$selections['lat'].'") ) * cos( radians( mem_map_lat ) )
-        * cos( radians( mem_map_lng ) - radians("'.$selections['long'].'") ) + sin( radians("'.$selections['lat'].'") ) 
-        * sin( radians( mem_map_lat ) ) ) ) AS distance');
-        # IF RATING
-        if(isset($params['star_rating']))
-        {
-            $avgStart = $params['star_rating'];
-        }
+        $this->db->from($this->table_name.' mem');
+        $this->db->select('mem.*, ( 3959 * acos( cos( radians("'.$selections['lat'].'") ) * cos( radians( mem.mem_map_lat ) )
+        * cos( radians( mem.mem_map_lng ) - radians("'.$selections['long'].'") ) + sin( radians("'.$selections['lat'].'") ) 
+        * sin( radians( mem.mem_map_lat ) ) ) ) AS distance');
 
         # IF DISTANCE RANGES
         if(isset($params['distance']))
@@ -102,8 +97,18 @@ class Member_model extends CRUD_Model
         }
         
         $this->db->having(['distance <=' => $distanceEnd, 'distance >=' => $distanceStart]);
-        $this->db->where(['mem_type'=> 'vendor', 'mem_status'=> '1', 'mem_verified'=> '1']);
+        # IF RATING
+        if(isset($params['star_rating']))
+        {
+            $avgRating = $params['star_rating'];
+            $this->db->join('reviews r', 'mem.mem_id = r.mem_id');
+            $this->db->select('AVG(r.rating) as avgRating');
+            $this->db->having(['avgRating >=' => $avgRating]);
+        }
+
+        $this->db->where(['mem.mem_type'=> 'vendor', 'mem.mem_status'=> '1', 'mem.mem_verified'=> '1']);
         $nearby_vendors = $this->db->get()->result();
+        // pr($this->db->last_query());
 
         $vendors = [];
         $locations = [];

@@ -22,7 +22,7 @@
                             <form id="searchForm">
                                 <div class="in_blk">
                                     <h6>Zip Code</h6>
-                                    <input type="text" class="text_box" id="zip" name="zip"  value="<?=$selections['zipcode']?>">
+                                    <input type="text" class="text_box" id="zip" name="zip"  value="<?=$selections['zipcode']?>" readonly>
                                     <span id="invalidZip" style="color: red"></span>
                                 </div>
                                 <div class="in_blk">
@@ -40,7 +40,7 @@
                                             <label for="star_four_five">
                                                 <input type="radio" class="rating" id="star_four_five" name="star_rating" value="4.5">
                                                 <span class="rateYo" data-rateyo-rating="4.5"></span>
-                                                4.5 & up
+                                                4.5 - 5.0
                                             </label>
                                         </li>
                                         <li>
@@ -67,8 +67,8 @@
                                     </ul>
                                 </div>
                                 <div class="btn_blk">
-                                    <button type="reset" class="site_btn md light">Clear</button>
-                                    <button type="submit" id="search" class="site_btn md">Apply</button>
+                                    <button type="button" id="clear" class="site_btn md light">Clear</button>
+                                    <button type="button" id="search" class="site_btn md">Apply</button>
                                 </div>
                             </form>
                         </div>
@@ -222,79 +222,171 @@
                 });
             });
 
-            $(document).ready(function () {
-                // SEARCH REQUEST DETECTIONS BLOCK
-                $(document).on('submit', '#searchForm', function(e){
-                    e.preventDefault();
-                    $('#invalidZip').html('');
-
-                    let zipcode = $.trim($('#zip').val());
-                    if (zipcode.length == 0){
-                        $('#invalidZip').html('Please enter a valid zip.');
-                        return false;
-                    }
-
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({
-                        componentRestrictions: {
-                            country: 'gb',
-                            postalCode: zipcode
-                        }
-                    }, function(results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            $('#invalidZip').html('');
-                            latitude = results[0].geometry.location.lat();
-                            longitude = results[0].geometry.location.lng();
-
-                            let form = this;
-                            let formData = new FormData(form);
-                            $.ajax({
-                                async: false,
-                                url: base_url + 'search/advance_search_vendors',
-                                type: "POST",
-                                data: formData,
-                                dataType: 'json',
-                                success: function (res) {
-                                    $('#quotes-section').html(res.html);
-                                    loadQuotes();
-                                    $("img[lazy]").lazyload();
-                                    $('.rateYo').rateYo({
-                                        fullStar: true,
-                                        readOnly: true,
-                                        normalFill: '#ddd',
-                                        ratedFill: '#ffc000',
-                                        starWidth: '14px',
-                                        spacing: '2px'
-                                    });
-                                    locations = res.locations;
-                                    if(locations.length > 0)
-                                    {
-                                        $('#map_blk').show();
-                                        startLat = locations[0][1];
-                                        startLng = locations[0][2];
-                                        startLatLng = new google.maps.LatLng(startLat, startLng);
-                                        init();
-                                    }
-                                    else{
-                                        $('#map_blk').hide();
-                                    }
-                                },
-                                error: function (data) {
-                                },
-                                complete: function (data) {
-                                    ajaxSearch = false;
-                                },
-                                xhr : function(){
-                                    return xhr;
-                                }
-                            }); 
-                        } else {
-                            $('#invalidZip').html('Please enter a valid zip.');
-                        }
-                    });
+            $(document).on('click', '#clear', (e) => {
+                e.preventDefault();
+                $('#price').ionRangeSlider({
+                    skin: 'square',
+                    min: 1,
+                    max: 140,
+                    type: 'double',
+                    prettify: function(num) {
+                        return '£' + num;
+                    },
+                    onFinish: function(data) {
+                        // searchFunction();
+                    },
+                    grid: true
                 });
-                // END SEARCH BLOCK
+                $('#distance').ionRangeSlider({
+                    skin: 'square',
+                    min: 1,
+                    max: 50,
+                    type: 'double',
+                    prettify: function(num) {
+                        return num;
+                    },
+                    onFinish: function(data) {
+                        // searchFunction();
+                    },
+                    grid: true
+                });
+                $('.rating').prop('checked', false);
+                
             });
+            $(document).on('click', '#search', function(e) 
+            {
+                e.preventDefault();
+                search();
+            });
+
+
+            var xhr = new window.XMLHttpRequest();
+            var ajaxSearch = false;
+            function search() 
+            {
+                if(xhr && xhr.readyState != 4) {
+                    xhr.abort();
+                }
+                if(ajaxSearch)
+                    return;
+
+                ajaxSearch = true;
+                let formData = $("#searchForm").serializeArray();
+                $.ajax({
+                    async: false,
+                    url: base_url + 'search/advance_search_vendors',
+                    type: "POST",
+                    data: $.param(formData),
+                    dataType: 'json',
+                    success: function (res) {
+                        $('#quotes-section').html(res.html);
+                        loadQuotes();
+                        $("img[lazy]").lazyload();
+                        $('.rateYo').rateYo({
+                            fullStar: true,
+                            readOnly: true,
+                            normalFill: '#ddd',
+                            ratedFill: '#ffc000',
+                            starWidth: '14px',
+                            spacing: '2px'
+                        });
+                        locations = res.locations;
+                        if(locations.length > 0)
+                        {
+                            $('#map_blk').show();
+                            startLat = locations[0][1];
+                            startLng = locations[0][2];
+                            startLatLng = new google.maps.LatLng(startLat, startLng);
+                            init();
+                        }
+                        else{
+                            $('#map_blk').hide();
+                        }
+                    },
+                    error: function (data) {
+                    },
+                    complete: function (data) {
+                        ajaxSearch = false;
+                    },
+                    xhr : function(){
+                        return xhr;
+                    }
+                }); 
+            }
+
+            // $(document).ready(function () {
+            //     // SEARCH REQUEST DETECTIONS BLOCK
+            //     $(document).on('submit', '#searchForm', function(e){
+            //         e.preventDefault();
+            //         $('#invalidZip').html('');
+
+            //         let zipcode = $.trim($('#zip').val());
+            //         if (zipcode.length == 0){
+            //             $('#invalidZip').html('Please enter a valid zip.');
+            //             return false;
+            //         }
+
+            //         var geocoder = new google.maps.Geocoder();
+            //         geocoder.geocode({
+            //             componentRestrictions: {
+            //                 country: 'gb',
+            //                 postalCode: zipcode
+            //             }
+            //         }, function(results, status) {
+            //             if (status == google.maps.GeocoderStatus.OK) {
+            //                 $('#invalidZip').html('');
+            //                 latitude = results[0].geometry.location.lat();
+            //                 longitude = results[0].geometry.location.lng();
+
+            //                 let form = this;
+            //                 let formData = new FormData(form);
+            //                 $.ajax({
+            //                     async: false,
+            //                     url: base_url + 'search/advance_search_vendors',
+            //                     type: "POST",
+            //                     data: formData,
+            //                     dataType: 'json',
+            //                     success: function (res) {
+            //                         $('#quotes-section').html(res.html);
+            //                         loadQuotes();
+            //                         $("img[lazy]").lazyload();
+            //                         $('.rateYo').rateYo({
+            //                             fullStar: true,
+            //                             readOnly: true,
+            //                             normalFill: '#ddd',
+            //                             ratedFill: '#ffc000',
+            //                             starWidth: '14px',
+            //                             spacing: '2px'
+            //                         });
+            //                         locations = res.locations;
+            //                         if(locations.length > 0)
+            //                         {
+            //                             $('#map_blk').show();
+            //                             startLat = locations[0][1];
+            //                             startLng = locations[0][2];
+            //                             startLatLng = new google.maps.LatLng(startLat, startLng);
+            //                             init();
+            //                         }
+            //                         else{
+            //                             $('#map_blk').hide();
+            //                         }
+            //                     },
+            //                     error: function (data) {
+            //                     },
+            //                     complete: function (data) {
+            //                         ajaxSearch = false;
+            //                     },
+            //                     xhr : function(){
+            //                         return xhr;
+            //                     }
+            //                 }); 
+            //             } else {
+            //                 $('#invalidZip').html('Please enter a valid zip.');
+            //             }
+            //         });
+            //     });
+            //     // END SEARCH BLOCK
+            // });
 
             function init() {
                 map = new google.maps.Map(document.getElementById('map_blk'), {
