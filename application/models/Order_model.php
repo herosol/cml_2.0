@@ -38,11 +38,13 @@ class Order_model extends CRUD_Model
         $this->db->where(['o.order_id'=> $order_id]);
         return $this->db->get()->row();
     }
-    function get_vendor_orders()
+    function get_vendor_orders($where = null)
     {
         $this->db->from($this->table_name.' o');
         $this->db->join('members m', 'o.buyer_id=m.mem_id');
         $this->db->select('o.*, m.mem_fname, m.mem_lname');
+        if($where !== null)
+            $this->db->where($where);
         $this->db->where(['o.vendor_id'=> $this->session->mem_id, 'o.paypal_pending'=> 'no']);
         $this->db->group_by('o.order_id');
         $this->db->order_by('o.order_id', 'DESC');

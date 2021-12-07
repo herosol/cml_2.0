@@ -95,20 +95,20 @@ class Member_model extends CRUD_Model
             $distanceStart = '0';
             $distanceEnd   =  $this->data['site_settings']->site_radius > 0 ? $this->data['site_settings']->site_radius : '10'; 
         }
-        
-        $this->db->having(['distance <=' => $distanceEnd, 'distance >=' => $distanceStart]);
         # IF RATING
         if(isset($params['star_rating']))
         {
             $avgRating = $params['star_rating'];
-            $this->db->join('reviews r', 'mem.mem_id = r.mem_id');
+            $this->db->join('reviews r', 'mem.mem_id = r.mem_id', 'LEFT');
             $this->db->select('AVG(r.rating) as avgRating');
+            $this->db->group_by('r.mem_id');
             $this->db->having(['avgRating >=' => $avgRating]);
         }
 
+        $this->db->having(['distance <=' => $distanceEnd, 'distance >=' => $distanceStart]);        
         $this->db->where(['mem.mem_type'=> 'vendor', 'mem.mem_status'=> '1', 'mem.mem_verified'=> '1']);
+
         $nearby_vendors = $this->db->get()->result();
-        // pr($this->db->last_query());
 
         $vendors = [];
         $locations = [];
@@ -120,11 +120,11 @@ class Member_model extends CRUD_Model
             
             # CHECK IF VENDOR ALLOW SERVICE IN REQUIRED DISTANCE
             if($vendor->mem_travel_radius >= $vendor->distance):
-                # CHECK IF USER PROVIDING ALL REQUIRED SERVICES
+                # CHECK IF VENDOR PROVIDING ALL REQUIRED SERVICES
                 $service_check = vendor_service_check($vendor->mem_id, $selections['selected_service'], $selections['qty']);
                 if($service_check['return']):
                     $vendor->estimated_price = $service_check['estimated_price'];
-                    # PRICE RANGES
+                    # IF PRICE RANGES
                     if(isset($params['price']))
                     {
                         $priceIndexes = explode(';', $params['price']);

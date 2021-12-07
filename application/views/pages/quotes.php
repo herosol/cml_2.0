@@ -17,7 +17,7 @@
                 <div class="flex_row">
                     <div class="col col1">
                         <div id="filter_blk" class="blk filters scrollbar">
-                            <h5>Filter by</h5>
+                            <span id="showing_records">Filter by</span>
                             <button type="button" class="cross_btn"></button>
                             <form id="searchForm">
                                 <div class="in_blk">
@@ -67,8 +67,12 @@
                                     </ul>
                                 </div>
                                 <div class="btn_blk">
-                                    <button type="button" id="clear" class="site_btn md light">Clear</button>
-                                    <button type="button" id="search" class="site_btn md">Apply</button>
+                                    <button type="button" id="clear" class="site_btn md light" disabled>
+                                        <i class="spinner hidden"></i>Clear
+                                    </button>
+                                    <button type="button" id="search" class="site_btn md">
+                                        <i class="spinner hidden"></i>Apply
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -141,10 +145,12 @@
                 size_quotes = $(".quotes .srch_blk").length;
                 append_size = 3;
                 x = 3;
+                
                 $('.quotes .srch_blk:lt(' + x + ')').show();
             }
             $(document).ready(function() {
                 loadQuotes();
+                records_showing();
             });
 
             const loadMore = () => {
@@ -153,12 +159,18 @@
                 if (x == total) {
                     $('.more-less-quotes').empty().append(`<button onclick="showLess();" class="site_btn light">Show Less <i class="fi-arrow-right"></i></button>`);
                 }
+                records_showing();
             }
             const showLess = () => {
                 x = 3;
                 $('.quotes .srch_blk').not(':lt(' + x + ')').hide();
                 $('.more-less-quotes').empty().append(`<button onclick="loadMore();" class="site_btn light">More Quotes <i class="fi-arrow-right"></i></button>`);
+                records_showing();
                 window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+
+            const records_showing = () => {
+                $('#showing_records').html(`Showing <em>${total <= x ? total : x}</em> out of total <em>${total}</em> ${total > 1 ? 'records' : 'record'}`);
             }
         </script>
         <!-- Ion Slider -->
@@ -222,7 +234,7 @@
                 });
             });
 
-            $(document).on('click', '#clear', (e) => {
+            $(document).on('click', '#clear', function(e) {
                 e.preventDefault();
                 $('#price').ionRangeSlider({
                     skin: 'square',
@@ -251,24 +263,38 @@
                     grid: true
                 });
                 $('.rating').prop('checked', false);
+                search($(this));
+                $('#clear').prop('disabled', true);
                 
             });
             $(document).on('click', '#search', function(e) 
             {
                 e.preventDefault();
-                search();
+                search($(this));
             });
-
+            $(document).ready(function() {
+                $('#searchForm').on('input change', function() {
+                    $('#clear').attr('disabled', false);
+                });
+            });
 
             var xhr = new window.XMLHttpRequest();
             var ajaxSearch = false;
-            function search() 
+            function search(btn = null) 
             {
                 if(xhr && xhr.readyState != 4) {
                     xhr.abort();
                 }
                 if(ajaxSearch)
                     return;
+
+                let frmIcon;
+                if(btn !== null)
+                {   
+                    frmIcon = btn.find('i.spinner');
+                    frmIcon.removeClass('hidden');
+                    frmIcon.prop('disabled', true);
+                }
 
                 ajaxSearch = true;
                 let formData = $("#searchForm").serializeArray();
@@ -279,8 +305,15 @@
                     data: $.param(formData),
                     dataType: 'json',
                     success: function (res) {
+                        if(btn !== null)
+                        {
+                            frmIcon.addClass('hidden');
+                            frmIcon.prop('disabled', false);
+                        }
                         $('#quotes-section').html(res.html);
+                        $('#total-vendors').val(res.total);
                         loadQuotes();
+                        records_showing();
                         $("img[lazy]").lazyload();
                         $('.rateYo').rateYo({
                             fullStar: true,

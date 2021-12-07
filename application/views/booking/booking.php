@@ -199,7 +199,6 @@
                                         </div>
                                     </div>
                                     <div class="btn_blk form_btn text-center">
-                                        <button type="button" class="site_btn light prev_btn"><img src="<?= base_url('assets/images/arrow-left-sm.svg') ?>" alt=""> Previous step</button>
                                         <button type="button" class="site_btn next_btn 1-step">Continue</button>
                                     </div>
                                 </fieldset>
@@ -738,7 +737,6 @@
                                         </ul>
                                         <hr>
                                         <ul class="list flex">
-                                            <?php if ($selections['place-order']['use_pickdrop'] == 'on') : ?>
                                                 <li>
                                                     <strong>Collection Date</strong>
                                                     <span><?= date_picker_format_date($selections['place-order']['collection_date'], 'D, d M Y') ?></span>
@@ -759,17 +757,10 @@
                                                     <strong id="drop-type"></strong>
                                                     <input type="hidden" name="drop_type" id="drop-type-value" value="">
                                                 </li>
-                                            <?php else : ?>
+                                                
                                                 <li class="full">
                                                     <strong>Vendor Address</strong>
-                                                    <span>
-                                                        <?php
-                                                        foreach (explode('@', $selections['place-order']['dropoffAddress']) as $val) :
-                                                            echo $val;
-                                                            echo '<br>';
-                                                        endforeach;
-                                                        ?>
-                                                    </span>
+                                                    <span><?= $vendor->mem_business_address . ' ' . $vendor->mem_business_city . ' ' . $vendor->mem_business_zip ?></span>
                                                 </li>
                                                 <li>
                                                     <strong>Drop Off Date</strong>
@@ -779,7 +770,6 @@
                                                     <strong>Drop Off Time</strong>
                                                     <span><?= $selections['place-order']['delivery_time'] ?></span>
                                                 </li>
-                                            <?php endif; ?>
                                         </ul>
                                         <hr>
                                         <h4 class="subheading">Order Summary</h4>
@@ -1108,48 +1098,53 @@
                     let check = true;
                     let errHtml;
                     if (currBtn.hasClass('1-step')) {
-                        let collection_date = $('#collection_date');
-                        let collection_time = $('#collection_time');
-                        let collection_from = $('#collection_from');
-                        let delivery_date = $('#delivery_date');
-                        let delivery_time = $('#delivery_time');
-                        let delivery_from = $('#delivery_from');
-                        if (collection_date.val() == '') {
-                            collection_date.addClass('error');
-                            check = false;
-                        } else {
-                            collection_date.removeClass('error');
+                        let pickdrop = $('#usePickAndDropService').is(':checked');
+                        if(pickdrop)
+                        {
+                            let collection_date = $('#collection_date');
+                            let collection_time = $('#collection_time');
+                            let collection_from = $('#collection_from');
+                            let delivery_date = $('#delivery_date');
+                            let delivery_time = $('#delivery_time');
+                            let delivery_from = $('#delivery_from');
+                            if (collection_date.val() == '') {
+                                collection_date.addClass('error');
+                                check = false;
+                            } else {
+                                collection_date.removeClass('error');
+                            }
+                            if (collection_time.val() == '') {
+                                collection_time.addClass('error');
+                                check = false;
+                            } else {
+                                collection_time.removeClass('error');
+                            }
+                            if (collection_from.val() == '') {
+                                collection_from.addClass('error');
+                                check = false;
+                            } else {
+                                collection_from.removeClass('error');
+                            }
+                            if (delivery_date.val() == '') {
+                                delivery_date.addClass('error');
+                                check = false;
+                            } else {
+                                delivery_date.removeClass('error');
+                            }
+                            if (delivery_time.val() == '') {
+                                delivery_time.addClass('error');
+                                check = false;
+                            } else {
+                                delivery_time.removeClass('error');
+                            }
+                            if (delivery_from.val() == '') {
+                                delivery_from.addClass('error');
+                                check = false;
+                            } else {
+                                delivery_from.removeClass('error');
+                            }
                         }
-                        if (collection_time.val() == '') {
-                            collection_time.addClass('error');
-                            check = false;
-                        } else {
-                            collection_time.removeClass('error');
-                        }
-                        if (collection_from.val() == '') {
-                            collection_from.addClass('error');
-                            check = false;
-                        } else {
-                            collection_from.removeClass('error');
-                        }
-                        if (delivery_date.val() == '') {
-                            delivery_date.addClass('error');
-                            check = false;
-                        } else {
-                            delivery_date.removeClass('error');
-                        }
-                        if (delivery_time.val() == '') {
-                            delivery_time.addClass('error');
-                            check = false;
-                        } else {
-                            delivery_time.removeClass('error');
-                        }
-                        if (delivery_from.val() == '') {
-                            delivery_from.addClass('error');
-                            check = false;
-                        } else {
-                            delivery_from.removeClass('error');
-                        }
+
                         if (!check)
                         {
                             $('html, body').animate({
@@ -1158,6 +1153,7 @@
                             return false;
                         }
                     }
+
                     if (currBtn.hasClass('2-step')) {
                         let pickdrop = '<?= $selections['pick-or-facility'] ?>';
                         let services = $('input[name="selected_service[]"]').length;
@@ -1193,7 +1189,7 @@
                             let mem_lname = $('#mem_lname');
                             let mem_phone = $('#mem_phone');
                             let mem_email = $('#mem_email');
-                            let password = $('#password');
+                            let password  = $('#password');
                             let cpassword = $('#cpassword');
                             let address_country = $('#address_country');
                             let address_state = $('#address_state');
@@ -1436,7 +1432,6 @@
                     $(this).removeClass("add_btn").addClass("del_btn");
                 } else {
                     if ($(this).hasClass('right')) {
-                        alert('enter right');
                         $("td button").filter("[data-subservice-id='" + $(this).data('subservice-id') + "']").removeClass('del_btn').addClass('add_btn');
                         $('#preview-item-' + $(this).data('subservice-id')).remove();
                         $(this).parent().parent().remove();

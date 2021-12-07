@@ -82,7 +82,8 @@ class Search extends MY_Controller
                 [
                     'status'=> true,
                     'html'=> $this->load->view('pages/search-quotes', $this->data, true),
-                    'locations'=> $fetch['locations']
+                    'locations'=> $fetch['locations'],
+                    'total' => count($fetch['vendors'])
                 ]
             );
         }

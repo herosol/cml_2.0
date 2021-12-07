@@ -168,6 +168,7 @@ class Vendor extends MY_Controller
     public function orders()
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
+        // ALL ORDERS
         $orders = $this->order_model->get_vendor_orders();
         $services = [];
         foreach ($orders as $index => $order) :
@@ -181,8 +182,40 @@ class Vendor extends MY_Controller
             endforeach;
             $orders[$index]->services = $services;
         endforeach;
-
         $this->data['orders'] = $orders;
+
+        // DELIVERED ORDERS
+        $delivered_orders = $this->order_model->get_vendor_orders(['order_status'=> 'Delivered']);
+        $services = [];
+        foreach ($delivered_orders as $index => $order) :
+            $order_detail = $this->orderd_model->get_rows(['order_id' => $order->order_id]);
+            foreach ($order_detail as $key => $row) :
+                $sub_service = $this->master->get_data_row('sub_services', ['id' => $row->sub_service_id]);
+                $service     = $this->master->get_data_row('services', ['id' => $sub_service->service_id]);
+                if (!in_array($service->name, $services)) {
+                    $services[] = $service->name;
+                }
+            endforeach;
+            $delivered_orders[$index]->services = $services;
+        endforeach;
+        $this->data['delivered_orders'] = $delivered_orders;
+
+        // CANCELED ORDERS
+        $canceled_orders = $this->order_model->get_vendor_orders(['order_status'=> 'Delivered']);
+        $services = [];
+        foreach ($canceled_orders as $index => $order) :
+            $order_detail = $this->orderd_model->get_rows(['order_id' => $order->order_id]);
+            foreach ($order_detail as $key => $row) :
+                $sub_service = $this->master->get_data_row('sub_services', ['id' => $row->sub_service_id]);
+                $service     = $this->master->get_data_row('services', ['id' => $sub_service->service_id]);
+                if (!in_array($service->name, $services)) {
+                    $services[] = $service->name;
+                }
+            endforeach;
+            $canceled_orders[$index]->services = $services;
+        endforeach;
+        $this->data['canceled_orders'] = $canceled_orders;
+
         $this->load->view('vendor/orders', $this->data);
     }
 

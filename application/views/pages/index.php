@@ -32,7 +32,11 @@
                                     <input type="text" name="zip" id="zip" class="text_box" placeholder="Type your Postcode">
                                     <span id="invalidZip"></span>
                                 </div>
-                                <div class="btn_blk"><button type="button" class="site_btn" id="searchZipForm"><i class="spinner hidden"></i><?= $content['search_btn_title'] ?></button></div>
+                                <div class="btn_blk">
+                                    <button type="button" class="site_btn" id="searchZipForm">
+                                        <i class="spinner hidden"></i><?= $content['search_btn_title'] ?>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     <?php endif; ?>
@@ -239,14 +243,18 @@
 
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmqmsf3pVEVUoGAmwerePWzjUClvYUtwM&libraries=geometry,places&ext=.js"></script>
         <script type="text/javascript">
-            $(document).on('click', '#searchZipForm', () => {
-                let frmIcon = $(this).find("i.spinner");
-                frmIcon.removeClass("hidden");
+            $(document).on('click', '#searchZipForm', function () {
+                $('#invalidZip').html('');
                 let zipcode = $.trim($('#zip').val());
                 if (zipcode.length == 0)
                     return false;
+                    
+                let frmIcon = $(this).find("i.spinner");
+                let btn = $(this);
+                frmIcon.removeClass("hidden");
+                btn.prop('disabled', true);
 
-                $('#invalidZip').html('');
+
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({
                     componentRestrictions: {
@@ -261,6 +269,7 @@
                         window.location = base_url + 'service-selection?zipcode=' + zipcode + '&lat=' + latitude + '&long=' + longitude;
                     } else {
                         frmIcon.addClass("hidden");
+                        btn.prop('disabled', false);
                         $('#invalidZip').html('Please enter a valid zip.');
                     }
                 });
