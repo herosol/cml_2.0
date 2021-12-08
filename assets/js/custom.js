@@ -78,6 +78,7 @@ $(document).on("submit", ".formAjax", function (e) {
 	});
 });
 
+//TEST
 $(document).ready(function () {
 	$(document).on("submit", ".frmAjax", function (e) {
 		e.preventDefault();
@@ -101,9 +102,17 @@ $(document).ready(function () {
 			.done(function (rs) {
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -121,7 +130,9 @@ $(document).ready(function () {
 							$(".popup").fadeOut();
 							$("html").removeClass("flow");
 							if (rs.updated_email != "") {
-								$("#currently-signin-email").html(`<strong>${rs.updated_email}</strong>`);
+								$("#currently-signin-email").html(
+									`<strong>${rs.updated_email}</strong>`
+								);
 							}
 						}
 						if (rs.hide_msg) frmMsg.slideUp(500);
@@ -176,9 +187,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -248,9 +267,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -315,9 +342,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (rs.status == 1) {
 					let mem = rs.mem_data;
@@ -348,23 +383,73 @@ $(document).ready(function () {
                         <label for="address" class="move">Address</label>
                         <select name="address" id="address" class="txtBox" onchange="setAddress(this)">
                         <option value="">Select</option>`;
-						if ($.trim(mem.mem_city).length != 0 && $.trim(mem.mem_address).length != 0 && $.trim(mem.mem_zip).length != 0) {
-							select_address += `<option data-type="home" value="${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}" data-lat="${mem.mem_map_lat}" data-long="${mem.mem_map_lng}" data-full-address="Home: ${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}" ${address_type.val() == "home" ? "selected" : ""}>
-                            Home: ${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}
+						if (
+							$.trim(mem.mem_city).length != 0 &&
+							$.trim(mem.mem_address).length != 0 &&
+							$.trim(mem.mem_zip).length != 0
+						) {
+							select_address += `<option data-type="home" value="${
+								mem.mem_city
+							} - ${mem.mem_address} - ${mem.mem_zip}" data-lat="${
+								mem.mem_map_lat
+							}" data-long="${mem.mem_map_lng}" data-full-address="Home: ${
+								mem.mem_city
+							} - ${mem.mem_address} - ${mem.mem_zip}" ${
+								address_type.val() == "home" ? "selected" : ""
+							}>
+                            Home: ${mem.mem_city} - ${mem.mem_address} - ${
+								mem.mem_zip
+							}
                             </option>`;
 						}
-						if ($.trim(mem.mem_business_city).length != 0 && $.trim(mem.mem_business_address).length != 0 && $.trim(mem.mem_business_zip).length != 0) {
-							select_address += ` <option data-type="office" value="${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}" data-lat="${mem.mem_business_map_lat}" data-long="${mem.mem_business_map_lng}" data-full-address="Office: ${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}" ${address_type.val() == "office" ? "selected" : ""}>
-                            Office: ${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}
+						if (
+							$.trim(mem.mem_business_city).length != 0 &&
+							$.trim(mem.mem_business_address).length != 0 &&
+							$.trim(mem.mem_business_zip).length != 0
+						) {
+							select_address += ` <option data-type="office" value="${
+								mem.mem_business_city
+							} - ${mem.mem_business_address} - ${
+								mem.mem_business_zip
+							}" data-lat="${mem.mem_business_map_lat}" data-long="${
+								mem.mem_business_map_lng
+							}" data-full-address="Office: ${mem.mem_business_city} - ${
+								mem.mem_business_address
+							} - ${mem.mem_business_zip}" ${
+								address_type.val() == "office" ? "selected" : ""
+							}>
+                            Office: ${mem.mem_business_city} - ${
+								mem.mem_business_address
+							} - ${mem.mem_business_zip}
                             </option>`;
 						}
-						if ($.trim(mem.mem_hotel_city).length != 0 && $.trim(mem.mem_hotel_address).length != 0 && $.trim(mem.mem_hotel_zip).length != 0) {
-							select_address += `<option data-type="hotel" value="${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}" data-lat="${mem.mem_hotel_map_lat}" data-long="${mem.mem_hotel_map_lng}" data-full-address="Hotel: ${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}" ${address_type.val() == "hotel" ? "selected" : ""}>
-                            Hotel: ${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}
+						if (
+							$.trim(mem.mem_hotel_city).length != 0 &&
+							$.trim(mem.mem_hotel_address).length != 0 &&
+							$.trim(mem.mem_hotel_zip).length != 0
+						) {
+							select_address += `<option data-type="hotel" value="${
+								mem.mem_hotel_city
+							} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}" data-lat="${
+								mem.mem_hotel_map_lat
+							}" data-long="${
+								mem.mem_hotel_map_lng
+							}" data-full-address="Hotel: ${mem.mem_hotel_city} - ${
+								mem.mem_hotel_address
+							} - ${mem.mem_hotel_zip}" ${
+								address_type.val() == "hotel" ? "selected" : ""
+							}>
+                            Hotel: ${mem.mem_hotel_city} - ${
+								mem.mem_hotel_address
+							} - ${mem.mem_hotel_zip}
                             </option>`;
 						}
 						select_address += `</select></div>`;
-						if ($.trim(mem.mem_zip).length == 0 && $.trim(mem.mem_business_zip).length == 0 && $.trim(mem.mem_hotel_zip).length == 0) {
+						if (
+							$.trim(mem.mem_zip).length == 0 &&
+							$.trim(mem.mem_business_zip).length == 0 &&
+							$.trim(mem.mem_hotel_zip).length == 0
+						) {
 							select_address += `<div class="bTn">
                                 <button type="button" class="webBtn lightBtn" id="addAddressRuntime">Add Address</button>
                             </div>`;
@@ -417,9 +502,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -427,9 +520,15 @@ $(document).ready(function () {
 					setTimeout(function () {
 						$(".popup").fadeOut();
 						$("html").removeClass("flow");
-						$("#deliveryProofRequest").empty().append(`<div class="alert alert-success alert-sm text-white" style="">Request has been accepted successfully.</div>`);
+						$("#deliveryProofRequest")
+							.empty()
+							.append(
+								`<div class="alert alert-success alert-sm text-white" style="">Request has been accepted successfully.</div>`
+							);
 						$("#delivery_proof").empty();
-						$("#btn_order_status").empty().append(`<span class="webBtn mdBtn blockBtn completed>Completed</span>
+						$(
+							"#btn_order_status"
+						).empty().append(`<span class="webBtn mdBtn blockBtn completed>Completed</span>
                         `);
 						if (rs.frm_reset) {
 							frm.reset();
@@ -487,9 +586,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -497,7 +604,11 @@ $(document).ready(function () {
 					setTimeout(function () {
 						$(".popup").fadeOut();
 						$("html").removeClass("flow");
-						$("#deliveryProofRequest").empty().append(`<div class="alert alert-success alert-sm text-white" style="">Request has been rejected successfully.</div>`);
+						$("#deliveryProofRequest")
+							.empty()
+							.append(
+								`<div class="alert alert-success alert-sm text-white" style="">Request has been rejected successfully.</div>`
+							);
 						$("#delivery_proof").empty();
 						if (rs.frm_reset) {
 							frm.reset();
@@ -555,9 +666,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -623,9 +742,17 @@ $(document).ready(function () {
 
 				frmMsg.removeClass("alert alert-danger alert-sm text-white");
 				if (rs.status == 1) frmMsg.html(rs.msg).slideDown(500);
-				else frmMsg.addClass("alert alert-danger alert-sm text-white").html(rs.msg).slideDown(500);
+				else
+					frmMsg
+						.addClass("alert alert-danger alert-sm text-white")
+						.html(rs.msg)
+						.slideDown(500);
 
-				if (rs.scroll_to_msg) $("html, body").animate({ scrollTop: frmMsg.offset().top - 300 }, "slow");
+				if (rs.scroll_to_msg)
+					$("html, body").animate(
+						{ scrollTop: frmMsg.offset().top - 300 },
+						"slow"
+					);
 
 				if (typeof recaptcha !== "undefined" && recaptcha) grecaptcha.reset();
 
@@ -716,12 +843,33 @@ $(document).on("submit", ".frm_promo", function (e) {
 		success: function (promotions) {
 			var promos = "";
 			promotions.map((promotion) => {
-				promos += '<div class="col"><div class="promo_blk"><div class="icon"><img src="' + base_url + "/uploads/promos/" + promotion.image + '"></div><div class="txt"><h4>' + promotion.name + "</h4><p>" + promotion.tagline + '</p><p>This offer will expire on <span class="red-color">' + promotion.expiry_date + '</span></p></div><div class="btm"><div class="price">£' + promotion.price + '</div><div class="btn_blk"><a href="' + base_url + '" class="site_btn md block">Order Now</a></div><div class="by small"><strong>Added By: </strong>' + promotion.added_by + "</div></div></div></div>";
+				promos +=
+					'<div class="col"><div class="promo_blk"><div class="icon"><img src="' +
+					base_url +
+					"/uploads/promos/" +
+					promotion.image +
+					'"></div><div class="txt"><h4>' +
+					promotion.name +
+					"</h4><p>" +
+					promotion.tagline +
+					'</p><p>This offer will expire on <span class="red-color">' +
+					promotion.expiry_date +
+					'</span></p></div><div class="btm"><div class="price">£' +
+					promotion.price +
+					'</div><div class="btn_blk"><a href="' +
+					base_url +
+					'" class="site_btn md block">Order Now</a></div><div class="by small"><strong>Added By: </strong>' +
+					promotion.added_by +
+					"</div></div></div></div>";
 			});
-			$(".filter_promos").html('<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>');
+			$(".filter_promos").html(
+				'<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>'
+			);
 			setTimeout(function () {
 				if (promos == "" || promos == null) {
-					$(".filter_promos").html('<div class="col full"><p class="text-center">No Promotions Found</p></div>');
+					$(".filter_promos").html(
+						'<div class="col full"><p class="text-center">No Promotions Found</p></div>'
+					);
 				} else {
 					$(".filter_promos").html(promos);
 				}
