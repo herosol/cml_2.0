@@ -23,16 +23,26 @@ $(function () {
 
 	var upldFile;
 
-	$(document).on("click", ".uploadImg[data-upload]:not(.uploaded)", function () {
-		upldFile = $(this).attr("data-upload");
-		$(this).data("preText", $(this).attr("data-text"));
-		$(this).parents("form").find(`input[type="file"][data-upload="${upldFile}"]`).trigger("click");
-	});
+	$(document).on(
+		"click",
+		".uploadImg[data-upload]:not(.uploaded)",
+		function () {
+			upldFile = $(this).attr("data-upload");
+			$(this).data("preText", $(this).attr("data-text"));
+			$(this)
+				.parents("form")
+				.find(`input[type="file"][data-upload="${upldFile}"]`)
+				.trigger("click");
+		}
+	);
 
 	$(document).on("click", ".uploadImg[data-upload].uploaded", function () {
 		upldFile = $(this).attr("data-upload");
 		$(this).attr("data-text", $(this).data("preText")).removeClass("uploaded");
-		$(this).parents("form").find(`input[type="file"][data-upload="${upldFile}"]`).get(0).value = "";
+		$(this)
+			.parents("form")
+			.find(`input[type="file"][data-upload="${upldFile}"]`)
+			.get(0).value = "";
 	});
 
 	$(document).on("change", ".uploadFile[data-upload]", function () {
@@ -40,19 +50,32 @@ $(function () {
 		let file = $(this).val();
 		let preText = $(`.uploadImg[data-upload="${upldFile}"]`).data("preText");
 		if (this.files.length > 0) {
-			$(`.uploadImg[data-upload="${upldFile}"]`).addClass("uploaded").attr("data-text", file);
+			$(`.uploadImg[data-upload="${upldFile}"]`)
+				.addClass("uploaded")
+				.attr("data-text", file);
 		} else {
-			$(`.uploadImg[data-upload="${upldFile}"]`).removeClass("uploaded").attr("data-text", preText);
+			$(`.uploadImg[data-upload="${upldFile}"]`)
+				.removeClass("uploaded")
+				.attr("data-text", preText);
 		}
 	});
 
 	/*_____ Drop Down _____*/
 	$(document).on("click", ".drop_btn", function (e) {
 		e.stopPropagation();
-		if ($(this).parents(".drop_cnt:first").hasClass("active")) $(this).parents(".drop_cnt:first").find(".drop_cnt:first").addClass("active");
+		if ($(this).parents(".drop_cnt:first").hasClass("active"))
+			$(this)
+				.parents(".drop_cnt:first")
+				.find(".drop_cnt:first")
+				.addClass("active");
 		else {
-			$(".drop_cnt").not($(this).parent().children(".drop_cnt")).removeClass("active");
-			$(this).parents(".drop_down:first").find(".drop_cnt:first").toggleClass("active");
+			$(".drop_cnt")
+				.not($(this).parent().children(".drop_cnt"))
+				.removeClass("active");
+			$(this)
+				.parents(".drop_down:first")
+				.find(".drop_cnt:first")
+				.toggleClass("active");
 		}
 	});
 
@@ -92,14 +115,22 @@ $(function () {
 
 	$(document).on("click", ".pop_btn[data-store]", function () {
 		var vcode = $(this).data("store");
-		$("#vid_blk").html('<iframe src="https://www.youtube.com/embed/' + vcode + '?autoplay=1&loop=1&rel=0&wmode=transparent&modestbranding=1" allow="autoplay;" frameborder="0" wmode="Opaque"></iframe>');
+		$("#vid_blk").html(
+			'<iframe src="https://www.youtube.com/embed/' +
+				vcode +
+				'?autoplay=1&loop=1&rel=0&wmode=transparent&modestbranding=1" allow="autoplay;" frameborder="0" wmode="Opaque"></iframe>'
+		);
 	});
 
 	/*_____ FAQ's _____*/
 
 	$(document).on("click", ".faq_blk > h5", function () {
-		$(".faq_blk").not($(this).parent().toggleClass("active")).removeClass("active");
-		$(".faq_blk > .txt").not($(this).parent().children(".txt").slideToggle()).slideUp();
+		$(".faq_blk")
+			.not($(this).parent().toggleClass("active"))
+			.removeClass("active");
+		$(".faq_blk > .txt")
+			.not($(this).parent().children(".txt").slideToggle())
+			.slideUp();
 	});
 
 	$(".faq_lst > .faq_blk:nth-child(1)").addClass("active");
@@ -115,26 +146,53 @@ $(function () {
 		$(this).parent().find(".text_box").attr("type", "password");
 	});
 
-	$(document).on("focus", ".form_blk .text_box:not(select):not(.uploadImg)", function () {
-		$(this).parents(".form_blk:first").find("label:first").addClass("move");
-	});
+	$(document).on(
+		"focus",
+		".form_blk .text_box:not(select):not(.uploadImg)",
+		function () {
+			$(this).parents(".form_blk:first").find("label:first").addClass("move");
+		}
+	);
 
 	$(".form_blk .text_box:not(select)").each(function (e) {
-		if ($(this).val() != "") $(this).parents(".form_blk:first").find("label:first").addClass("move");
+		if ($(this).val() != "")
+			$(this).parents(".form_blk:first").find("label:first").addClass("move");
 	});
 
-	$(document).on("blur", ".form_blk .text_box:not(select):not(.uploadImg)", function () {
-		if (this.value == "") $(this).parents(".form_blk:first").find("label:first").removeClass("move");
-	});
+	$(document).on(
+		"blur",
+		".form_blk .text_box:not(select):not(.uploadImg)",
+		function () {
+			if (this.value == "")
+				$(this)
+					.parents(".form_blk:first")
+					.find("label:first")
+					.removeClass("move");
+		}
+	);
 
-	$(document).on("change", "[data-payment='wallet'] .lbl_btn > input.tglBlk", function () {
-		let checked = this.checked;
-		if (checked == true) {
-			$(this).parents("[data-payment='wallet']").find(".inside_blk").slideToggle();
-		} else $(this).parents("[data-payment='wallet']").find(".inside_blk").slideUp();
-	});
+	$(document).on(
+		"change",
+		"[data-payment='wallet'] .lbl_btn > input.tglBlk",
+		function () {
+			let checked = this.checked;
+			if (checked == true) {
+				$(this)
+					.parents("[data-payment='wallet']")
+					.find(".inside_blk")
+					.slideToggle();
+			} else
+				$(this)
+					.parents("[data-payment='wallet']")
+					.find(".inside_blk")
+					.slideUp();
+		}
+	);
 
-	$(".form_blk select.text_box").parents(".form_blk").find("label:first").addClass("move");
+	$(".form_blk select.text_box")
+		.parents(".form_blk")
+		.find("label:first")
+		.addClass("move");
 
 	$(document).on("click", "[inbox] .frnds li", function () {
 		$("[inbox] .chatBlk").addClass("active");
@@ -147,7 +205,9 @@ $(function () {
 	// data_list
 	$("table.data_list thead th").each(function (i, e) {
 		// console.log($(this).text());
-		$("table.data_list tbody tr").find(`td:eq(${i})`).attr("data-title", $(this).text());
+		$("table.data_list tbody tr")
+			.find(`td:eq(${i})`)
+			.attr("data-title", $(this).text());
 	});
 });
 
