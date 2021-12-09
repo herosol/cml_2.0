@@ -58,7 +58,7 @@
                         <p>Nice to see you<?= $mem_data->mem_first_time_login == 'no' ? ' again.' : '.' ?></p>
                     </div>
                 </div>
-                <div class="flex_row card_row full_height">
+                <div class="flex_row card_row full_height hidden">
                     <div class="col">
                         <div class="tile_blk">
                             <div class="top">

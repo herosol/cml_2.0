@@ -161,8 +161,9 @@ class Vendor extends MY_Controller
     public function notifications()
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
-        // $this->data['notifications'] = $this->order_model->vendor_notifications();
-        $this->load->view('buyer/notifications', $this->data);
+        $clear = $this->member_model->clear_notifs();
+        $this->data['notifications'] = $this->master->get_data_rows('notifications', ['mem_id'=> $this->session->mem_id]);
+        $this->load->view('vendor/notifications', $this->data);
     }
 
     public function orders()
@@ -201,7 +202,7 @@ class Vendor extends MY_Controller
         $this->data['delivered_orders'] = $delivered_orders;
 
         // CANCELED ORDERS
-        $canceled_orders = $this->order_model->get_vendor_orders(['order_status'=> 'Delivered']);
+        $canceled_orders = $this->order_model->get_vendor_orders(['order_status'=> 'Canceled']);
         $services = [];
         foreach ($canceled_orders as $index => $order) :
             $order_detail = $this->orderd_model->get_rows(['order_id' => $order->order_id]);
@@ -432,9 +433,23 @@ class Vendor extends MY_Controller
             $post = html_escape($this->input->post());
             $status = $post['statusToChange'];
             $order_id = doDecode($post['order_id']);
+            $order = $this->order_model->get_row($order_id);
 
             $is_update = $this->order_model->save(['order_status' => trim($status)], $order_id);
             if ($is_update) {
+                $notify = [];
+                if($status == 'Cancelled')
+                {
+                    $notify_txt = 'Your order has been cancelled. <a href="@@buyer/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+                    $notify = ['mem_id'=> $order->buyer_id, 'from_id'=> $order->vendor_id, 'txt'=> $notify_txt, 'cat'=> 'order_cancelled'];
+                }
+                else if($status == 'In Progress')
+                {
+                    $notify_txt = 'Vendor has started working on your order. <a href="@@buyer/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+                    $notify = ['mem_id'=> $order->buyer_id, 'from_id'=> $order->vendor_id, 'txt'=> $notify_txt, 'cat'=> 'order_progress'];
+                }
+                $this->master->save('notifications', $notify);
+
                 exit(json_encode(['status' => 'success']));
             } else {
                 exit(json_encode(['status' => 'failed']));
@@ -471,7 +486,7 @@ class Vendor extends MY_Controller
             $res['redirect_url'] = 0;
 
             $post = html_escape($this->input->post());
-            $post['order_id'] = doDecode($post['order_id']);
+            $post['order_id'] = $order_id = doDecode($post['order_id']);
 
             // pr($_FILES);
             if (empty($_FILES["proof_image"]["name"])) {
@@ -504,6 +519,12 @@ class Vendor extends MY_Controller
             if ($is_added) {
                 $order_info['order_status'] = 'Delivered';
                 $this->order_model->save($order_info, $post['order_id']);
+
+                // NOTIFY
+                $order = $this->order_model->get_row($order_id);
+                $notify_txt = 'Vendor has delivered your order. <a href="@@buyer/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+                $notify = ['mem_id'=> $order->buyer_id, 'from_id'=> $order->vendor_id, 'txt'=> $notify_txt, 'cat'=> 'order_recieved'];
+                $this->master->save('notifications', $notify);
             }
 
             $res['msg'] = showMsg('success', 'Completions request sent successfully!');

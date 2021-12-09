@@ -47,7 +47,7 @@
                                                     <a href="<?= base_url() ?>vendor/order-detail/<?= doEncode($order->order_id) ?>" class="more_btn"></a>
                                                 </div>
                                             </td>
-                                            <td class="qty"><strong>Items</strong> 05</td>
+                                            <td class="qty"><strong>Items</strong> <?=count($order->services)?></td>
                                             <?php if ($order->pick_and_drop_service == '1') : ?>
                                                 <td class="date">
                                                     <strong>Collection</strong>
@@ -104,7 +104,7 @@
                                                     <a href="<?= base_url() ?>vendor/order-detail/<?= doEncode($order->order_id) ?>" class="more_btn"></a>
                                                 </div>
                                             </td>
-                                            <td class="qty"><strong>Items</strong> 05</td>
+                                            <td class="qty"><strong>Items</strong> <?=count($order->services)?></td>
                                             <?php if ($order->pick_and_drop_service == '1') : ?>
                                                 <td class="date">
                                                     <strong>Collection</strong>
@@ -161,7 +161,7 @@
                                                     <a href="<?= base_url() ?>vendor/order-detail/<?= doEncode($order->order_id) ?>" class="more_btn"></a>
                                                 </div>
                                             </td>
-                                            <td class="qty"><strong>Items</strong> 05</td>
+                                            <td class="qty"><strong>Items</strong> <?=count($order->services)?></td>
                                             <?php if ($order->pick_and_drop_service == '1') : ?>
                                                 <td class="date">
                                                     <strong>Collection</strong>

@@ -13,13 +13,13 @@
 
         <section id="trans">
             <div class="contain">
-                <div class="top_head">
+                <div class="top_head hidden">
                     <h4>Information on payment methods</h4>
                     <div class="btn_blk">
                         <button type="button" class="site_btn sm pop_btn" data-popup="withdraw-funds">Add New Pay Method</button>
                     </div>
                 </div>
-                <div class="flex_row info_row full_height">
+                <div class="flex_row info_row full_height hidden">
                     <div class="col">
                         <div class="pay_blk">
                             <div class="inr">
@@ -84,8 +84,8 @@
                         <div class="tile_blk">
                             <div class="top">
                                 <div class="txt">
-                                    <span>Available balance</span>
-                                    <div class="price">£5055.00</div>
+                                    <span>Total Transactions</span>
+                                    <div class="price"><?=count((array)$transactions)?></div>
                                 </div>
                                 <div class="icon"><img src="<?= base_url('assets/images/vector-wallet.svg') ?>" alt=""></div>
                             </div>
@@ -96,7 +96,7 @@
                             <div class="top">
                                 <div class="txt">
                                     <span>Used balance</span>
-                                    <div class="price">£3065.00</div>
+                                    <div class="price">£<?=price_format($used_balance)?></div>
                                 </div>
                                 <div class="icon"><img src="<?= base_url('assets/images/vector-money.svg') ?>" alt=""></div>
                             </div>

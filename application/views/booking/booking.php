@@ -111,7 +111,7 @@
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <h6>Collection Date</h6>
                                                 <div class="form_blk">
-                                                    <select name="collection_date" id="collection_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'collection_time')">
+                                                    <select name="collection_date" id="collection_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'collection_time'); appendSelectTextToId(this, 'collection-date-preview')">
                                                         <?= open_days_options($open_days) ?>
                                                     </select>
                                                 </div>
@@ -119,7 +119,7 @@
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <h6>Collection Time</h6>
                                                 <div class="form_blk">
-                                                    <select name="collection_time" id="collection_time" class="text_box selectpicker" data-container="body">
+                                                    <select name="collection_time" id="collection_time" class="text_box selectpicker" data-container="body" onchange="appendSelectTextToId(this, 'collection-time-preview')">
                                                         <?= $coming_day_times ?>
                                                     </select>
                                                 </div>
@@ -141,7 +141,7 @@
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <h6>Delivery Date</h6>
                                                 <div class="form_blk">
-                                                    <select name="delivery_date" id="delivery_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'delivery_time')">
+                                                    <select name="delivery_date" id="delivery_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $vendor_id ?>', 'delivery_time'); appendSelectTextToId(this, 'delivery-date-preview')">
                                                         <?= open_days_options($open_days) ?>
                                                     </select>
                                                 </div>
@@ -149,7 +149,7 @@
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <h6>Delivery Time</h6>
                                                 <div class="form_blk">
-                                                    <select name="delivery_time" id="delivery_time" class="text_box selectpicker" data-container="body">
+                                                    <select name="delivery_time" id="delivery_time" class="text_box selectpicker" data-container="body" onchange="appendSelectTextToId(this, 'delivery-time-preview')">
                                                         <?= $coming_day_times ?>
                                                     </select>
                                                 </div>
@@ -184,14 +184,14 @@
                                         <div class="form_row row">
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <div class="form_blk">
-                                                    <select name="delivery_date" id="delivery_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $mem_id ?>', 'delivery_time')">
+                                                    <select name="delivery_date" id="delivery_date" class="text_box selectpicker" data-container="body" onchange="fetchTime(this.value, '<?= $mem_id ?>', 'delivery_time'); appendSelectTextToId(this, 'dropoff-date-preview')">
                                                         <?= open_days_options($open_days) ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                                 <div class="form_blk">
-                                                    <select name="delivery_time" id="delivery_time" class="text_box selectpicker" data-container="body">
+                                                    <select name="delivery_time" id="delivery_time" class="text_box selectpicker" data-container="body" onchange="appendSelectTextToId(this, 'dropoff-time-preview')">
                                                         <?= $coming_day_times ?>
                                                     </select>
                                                 </div>
@@ -725,7 +725,8 @@
                                                 <span id="customer-email"><?= $mem_data->mem_email ?></span>
                                             </li>
                                         </ul>
-                                        <ul class="list flex">
+                                        <hr>
+                                        <ul class="list flex hidden" id="pickup-delivery-preview">
                                             <li>
                                                 <strong>Collection Address</strong>
                                                 <span id="collection-address"></span>
@@ -734,29 +735,28 @@
                                                 <strong>Delivery Address</strong>
                                                 <span id="delivery-address"></span>
                                             </li>
+                                            <li>
+                                                <strong>Collection Date</strong>
+                                                <span id="collection-date-preview"><?= $selected_day ?></span>
+                                            </li>
+                                            <li>
+                                                <strong>Collection Time</strong>
+                                                <span id="collection-time-preview"></span>
+                                            </li>
+                                            <li>
+                                                <strong>Delivery Date</strong>
+                                                <span id="delivery-date-preview"><?= $selected_day ?></span>
+                                            </li>
+                                            <li>
+                                                <strong>Delivery Time</strong>
+                                                <span id="delivery-time-preview"></span>
+                                            </li>
+                                            <li>
+                                                <strong id="drop-type"></strong>
+                                                <input type="hidden" name="drop_type" id="drop-type-value" value="">
+                                            </li>
                                         </ul>
-                                        <hr>
-                                        <ul class="list flex">
-                                                <li>
-                                                    <strong>Collection Date</strong>
-                                                    <span><?= date_picker_format_date($selections['place-order']['collection_date'], 'D, d M Y') ?></span>
-                                                </li>
-                                                <li>
-                                                    <strong>Collection Time</strong>
-                                                    <span><?= $selections['place-order']['collection_time'] ?></span>
-                                                </li>
-                                                <li>
-                                                    <strong>Delivery Date</strong>
-                                                    <span><?= date_picker_format_date($selections['place-order']['delivery_date'], 'D, d M Y') ?></span>
-                                                </li>
-                                                <li>
-                                                    <strong>Delivery Time</strong>
-                                                    <span><?= $selections['place-order']['delivery_time'] ?></span>
-                                                </li>
-                                                <li>
-                                                    <strong id="drop-type"></strong>
-                                                    <input type="hidden" name="drop_type" id="drop-type-value" value="">
-                                                </li>
+                                        <ul class="list flex" id="vendor-address-preview">
                                                 
                                                 <li class="full">
                                                     <strong>Vendor Address</strong>
@@ -764,11 +764,11 @@
                                                 </li>
                                                 <li>
                                                     <strong>Drop Off Date</strong>
-                                                    <span><?= date_picker_format_date($selections['place-order']['delivery_date'], 'D, d M Y') ?></span>
+                                                    <span id="dropoff-date-preview"><?= $selected_day ?></span>
                                                 </li>
                                                 <li>
                                                     <strong>Drop Off Time</strong>
-                                                    <span><?= $selections['place-order']['delivery_time'] ?></span>
+                                                    <span id="dropoff-time-preview"></span>
                                                 </li>
                                         </ul>
                                         <hr>
@@ -1046,6 +1046,14 @@
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmqmsf3pVEVUoGAmwerePWzjUClvYUtwM&libraries=geometry,places&ext=.js"></script>
         <script src="https://js.stripe.com/v2/"></script>
         <script>
+            $(document).ready(function(){
+                let collection_time = $('#collection_time').find(':selected').text();
+                let delivery_time   = $('#delivery_time').find(':selected').text();
+                $('#collection-time-preview').text(collection_time);
+                $('#delivery-time-preview').text(delivery_time);
+                $('#dropoff-time-preview').text(delivery_time);
+            });
+
             $(document).on('click', '#usePickAndDropService', (e) => {
                 let pickdrop_charges = $('.pickdrop_charges');
                 let pcharges = '<?= $vendor->mem_charges_per_miles * 2 ?>';
@@ -1055,16 +1063,20 @@
                     $('.minimum_order').removeClass('hidden');
                     $('.freePickupServiceOver').removeClass('hidden');
                     pickdrop_charges.removeClass('hidden');
-                    calculateEstimatedAmount();
                     $('#drop-delivery').html('Delivery');
+                    $('#pickup-delivery-preview').removeClass('hidden');
+                    $('#vendor-address-preview').addClass('hidden');
+                    calculateEstimatedAmount();
                 } else {
                     $('.businessAddressInfo').removeClass('hidden');
                     $('.pickupAndDeliveryInfo').addClass('hidden');
                     $('.minimum_order').addClass('hidden');
                     $('.freePickupServiceOver').addClass('hidden');
                     pickdrop_charges.addClass('hidden');
-                    calculateEstimatedAmount();
                     $('#drop-delivery').html('Drop off');
+                    $('#pickup-delivery-preview').addClass('hidden');
+                    $('#vendor-address-preview').removeClass('hidden');
+                    calculateEstimatedAmount();
                 }
             });
 
@@ -1086,11 +1098,7 @@
                     }
                 });
             });
-            <?php if (isset($selections['pick-or-facility']) && $selections['pick-or-facility'] == 'pickdrop') : ?>
-                var pickupDeliveryCharges = '<?= price_format($vendor->mem_charges_per_miles * 2) ?>';
-            <?php else : ?>
-                var pickupDeliveryCharges = '0.00';
-            <?php endif; ?>
+            var pickupDeliveryCharges = '<?= price_format($vendor->mem_charges_per_miles * 2) ?>';
             $(function() {
                 li = $('.svc_lst > li:first');
                 $(".next_btn").click(function() {
@@ -1155,7 +1163,7 @@
                     }
 
                     if (currBtn.hasClass('2-step')) {
-                        let pickdrop = '<?= $selections['pick-or-facility'] ?>';
+                        let pickdrop = $('#usePickAndDropService').is(':checked');
                         let services = $('input[name="selected_service[]"]').length;
                         if (services == '0') {
                             $('.servicesMessage').html(`Please select some items`);
@@ -1172,7 +1180,7 @@
                                 total += parseFloat($(this).data('price')) * parseInt($('#qty-' + index).val());
                             });
                             let minimumOrder = '<?= price_format($vendor->mem_charges_min_order) ?>';
-                            if (pickdrop == 'pickdrop') {
+                            if (pickdrop) {
                                 if (parseFloat(total.toFixed(2)) < parseFloat(minimumOrder)) {
                                     $('.servicesMessage').html(`Please order atleast price of £${parseFloat(minimumOrder).toFixed(2)}`);
                                     $('.servicesMessage').fadeIn();
@@ -1246,8 +1254,8 @@
                         {
                             alert();
                             $('html, body').animate({
-                                scrollTop: $(".error").first().offset().top-30
-                            }, 2000);
+                                scrollTop: $(".error").offset().top-30
+                            }, 500);
                             return false;
                         }
                         $(".estimate_blk").addClass("hidden");
@@ -1498,10 +1506,11 @@
                 });
                 $('#items-total').text(`£${total.toFixed(2)}`);
                 $('#items-total-preview').text(`£${total.toFixed(2)}`);
-                let pickupcharges = '<?= price_format($vendor->mem_charges_free_over) ?>';
+                let freePickupAmount = '<?= price_format($vendor->mem_charges_free_over) ?>';
+                console.log(freePickupAmount);
                 if(pickup)
                 {
-                    if (parseFloat(total.toFixed(2)) > parseFloat(pickupcharges)) {
+                    if (parseFloat(total.toFixed(2)) > parseFloat(freePickupAmount)) {
                         $('.freePickupAndDelivery').html(`Free Pickup & Delivery Service`);
                         $('.freePickupAndDelivery').fadeIn();
                         $('#pickup-and-delivery-preview').hide();
@@ -1546,6 +1555,11 @@
                 if (appendTo == 'drop-type') {
                     $('#drop-type-value').val(value);
                 }
+                $('#' + appendTo).text($.trim(value));
+            }
+
+            const appendSelectTextToId = (obj, appendTo) => {
+                let value = $(obj).find('option:selected').text();
                 $('#' + appendTo).text($.trim(value));
             }
             /// MAP FUNCTION

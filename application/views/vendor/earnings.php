@@ -32,7 +32,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="flex_row info_row full_height">
+                <div class="flex_row info_row full_height hidden">
                     <div class="col">
                         <div class="pay_blk">
                             <div class="inr">

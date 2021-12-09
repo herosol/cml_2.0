@@ -401,6 +401,15 @@ function oneHourTimeByGiven($default = '', $start, $end)
     return $html;
 }
 
+function makeNotifText($string)
+{
+    return str_replace('@@', base_url(), $string);
+}
+
+function makeNotifHeading($string) {
+    return ucwords(str_replace("_", " ", $string));
+}
+
 function getBredcrum($section, $ary)
 {
     $bcrum = '

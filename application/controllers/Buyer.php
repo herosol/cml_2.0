@@ -76,22 +76,42 @@ class Buyer extends MY_Controller
     public function notifications()
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
-        // $this->data['notifications'] = $this->order_model->buyer_notifications();
+        $clear = $this->member_model->clear_notifs();
+        $this->data['notifications'] = $this->master->get_data_rows('notifications', ['mem_id'=> $this->session->mem_id]);
         $this->load->view('buyer/notifications', $this->data);
     }
 
     public function orders()
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
+        // ALL ORDERS
         $orders = $this->order_model->get_buyer_orders();
         $services = [];
         foreach ($orders as $index => $order) :
             $order_detail = $this->master->getRows('order_detail', array('order_id' => $order->order_id));
             $orders[$index]->services = $order_detail;
         endforeach;
-
         $this->data['orders'] = $orders;
-        // pr($orders);
+
+        // DELIVERED ORDERS
+        $delivered_orders = $this->order_model->get_buyer_orders(['order_status'=> 'Delivered']);
+        $services = [];
+        foreach ($delivered_orders as $index => $order) :
+            $order_detail = $this->master->getRows('order_detail', array('order_id' => $order->order_id));
+            $delivered_orders[$index]->services = $order_detail;
+        endforeach;
+        $this->data['delivered_orders'] = $delivered_orders;
+
+        // CANCELED ORDERS
+        $canceled_orders = $this->order_model->get_buyer_orders(['order_status'=> 'Canceled']);
+        $services = [];
+        foreach ($canceled_orders as $index => $order) :
+            $order_detail = $this->master->getRows('order_detail', array('order_id' => $order->order_id));
+            $canceled_orders[$index]->services = $order_detail;
+        endforeach;
+        $this->data['canceled_orders'] = $canceled_orders;
+
+        // pr($this->data);
         $this->load->view('buyer/orders', $this->data);
     }
 
@@ -159,6 +179,11 @@ class Buyer extends MY_Controller
 
             $this->master->save('earnings', $earning);
             generate_order_log_for_vendor($proof->order_id);
+            // NOTIFY
+            $notify_txt = 'Your order delivery has been accepted and you got review on your order. <a href="@@vendor/order-detail/'.doEncode($proof->order_id).'">Click here</a> to view.';
+            $notify = ['mem_id'=> $order->vendor_id, 'from_id'=> $order->buyer_id, 'txt'=> $notify_txt, 'cat'=> 'delivery_accepted'];
+            $this->master->save('notifications', $notify);
+
             //RATING
             $res['msg'] = showMsg('success', 'Request accepted successfully!');
             $res['status'] = 1;
@@ -185,7 +210,10 @@ class Buyer extends MY_Controller
             $proof_data['status'] = 'rejected';
             $this->master->save('order_delivery_proof', $proof_data, 'proof_id', $proof_id);
             generate_order_log_for_vendor($proof->order_id);
-
+            // NOTIFY
+            $notify_txt = 'Your order delivery has been canceled. <a href="@@vendor/order-detail/'.doEncode($proof->order_id).'">Click here</a> to view.';
+            $notify = ['mem_id'=> $order->vendor_id, 'from_id'=> $order->buyer_id, 'txt'=> $notify_txt, 'cat'=> 'delivery_rejected'];
+            $this->master->save('notifications', $notify);
             //RATING
             $res['msg'] = showMsg('success', 'Request rejected successfully!');
             $res['status'] = 1;
@@ -197,7 +225,9 @@ class Buyer extends MY_Controller
     public function transactions()
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
-        $this->data['transactions'] = $this->order_model->buyer_transactions();
+        $transactions_details = $this->order_model->buyer_transactions();
+        $this->data['transactions'] = $transactions_details['transactions'];
+        $this->data['used_balance'] = $transactions_details['total_used_balance'];
         $this->load->view('buyer/transactions', $this->data);
     }
 

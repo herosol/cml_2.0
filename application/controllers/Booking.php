@@ -72,7 +72,10 @@ class Booking extends MY_Controller
 
         $html = oneHourTimeByGiven('', $opening_time, $closing_time);
         $this->data['coming_day_times'] = $html;
-        //START END SLEECTED DAY TIME
+
+        //First Opened Day
+        $this->data['selected_day'] = date_picker_format_date($open_days[0], 'D, d M', false);
+        //START END SELECTED DAY TIME
         $day = $selections['place-order']['collection_date'];
         $dayIndex = explode('-', $day);
         $day = $dayIndex[2].'-'.$dayIndex[0].'-'.$dayIndex[1];
@@ -122,7 +125,7 @@ class Booking extends MY_Controller
                 $this->form_validation->set_rules('address', 'Address', 'trim|required');
             }
             
-            if($selections['place-order']['use_pickdrop'] && $selections['place-order']['use_pickdrop'] == 'on')
+            if($post['use_pickdrop'] == 'on')
             {
                 $this->form_validation->set_rules('collection_date', 'Collection Date', 'trim|required');
                 $this->form_validation->set_rules('collection_time', 'Collection Time', 'trim|required');
@@ -229,7 +232,7 @@ class Booking extends MY_Controller
                     $row = sub_service_price($value, $this->data['vendor_id']);
                     $order['order_price'] += $row->price*($post['qty'][$key]);
                 endforeach;
-                if($selections['place-order']['use_pickdrop'] && $selections['place-order']['use_pickdrop'] == 'on')
+                if($post['use_pickdrop'] == 'on')
                 {
                     $order['pick_and_drop_service'] = '1';
                     if($order['order_price'] > $vendor->mem_charges_free_over)
@@ -252,8 +255,8 @@ class Booking extends MY_Controller
                 }
                 else
                 {
-                    $order['delivery_date']   = db_format_date($selections['place-order']['delivery_date']);
-                    $order['delivery_time']   = $selections['place-order']['delivery_time'];
+                    $order['delivery_date']   = db_format_date($post['delivery_date']);
+                    $order['delivery_time']   = $post['delivery_time'];
                     $order['address'] = $vendor->mem_business_city.'@'.$vendor->mem_business_address.'@'.$vendor->mem_business_zip;
                 }
                 $order['order_total_price'] = price_format($order['order_price'] + $order['pick_and_drop_charges']);
@@ -322,6 +325,9 @@ class Booking extends MY_Controller
                 }
                 if ($order_id > 0)
                 {
+                    $notify_txt = 'You have recieved new order. <a href="'.base_url().'vendor/order-detail/w4635323">Click here</a> to view.';
+                    $notify = ['mem_id'=> $this->data['vendor_id'], 'from_id'=> $buyer_id, 'txt'=> $notify_txt, 'cat'=> 'new_order'];
+                    $this->master->save('notifications', $notify);
                     $this->session->set_userdata('mem_id', $buyer_id);
                     $this->session->set_userdata('mem_type', 'buyer');
                     if ($post['payment_type'] == 'credit-card') 

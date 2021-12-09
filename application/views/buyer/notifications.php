@@ -14,138 +14,32 @@
         <section id="notify">
             <div class="contain">
                 <div class="blk noti_blk">
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/users/2.jpg') ?>" alt=""></a>
+                    <?php if(count($notifications) === 0): ?>
+                        <div class="inner">
+                            You have 0 notification.
                         </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>New Comment</h6>
-                                <p>Jannifer Kem commented on your order <a href="?">click here</a> to view comment.</p>
+                    <?php
+                    else:
+                     foreach($notifications as $index => $notif):
+                    ?>
+                        <div class="inner">
+                            <div class="ico">
+                                <a>
+                                    <img src="<?= get_site_image_src("members", get_mem_image($notif->from_id), 'thumb_'); ?>" alt="">
+                                </a>
                             </div>
-                            <span class="time">2 hours ago</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_01.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Washing Request</h6>
-                                <p>You have a new washing request from Samira Jones <a href="?">Accept</a> or <a href="?">Decline</a></p>
+                            <div class="txt">
+                                <div class="cnt">
+                                    <h6><?=makeNotifHeading($notif->cat)?> From <?=get_mem_name($notif->from_id)?></h6>
+                                    <p><?=makeNotifText($notif->txt)?></p>
+                                </div>
+                                <span class="time">2 hours ago</span>
                             </div>
-                            <span class="time">7 hours ago</span>
                         </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_04.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>New Order</h6>
-                                <p>You have created a new order for Jennifer Kem <a href="?">click here</a> to view detail.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_02.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Amend Invoice</h6>
-                                <p>You have to make a new amend invoice <a href="?">click here</a> to view detail.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_04.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>New Order</h6>
-                                <p>John Wick send a new order to you <a href="?">click here</a> to view detail.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/users/3.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Leave a Review</h6>
-                                <p>Leave a review on your experience with Jennifer Kem <a href="?">click here</a></p>
-                            </div>
-                            <span class="time">March 18 at 8:22 p.m.</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/users/2.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Rated a Review</h6>
-                                <p>You rated Jennifer Kem with 5 stars.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_01.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Check Notification</h6>
-                                <p>You have a new notification. You're welcome <a href="?">click here</a> to view them</p>
-                            </div>
-                            <span class="time">7 hours ago</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_02.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Order Rated</h6>
-                                <p>John wick rated your order with 5 stars.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/b_03.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Remove Order</h6>
-                                <p>You had removed a order.</p>
-                            </div>
-                            <span class="time">Yesterday at 5:32 am</span>
-                        </div>
-                    </div>
-                    <div class="inner">
-                        <div class="ico">
-                            <a href="?"><img src="<?= base_url('assets/images/users/1.jpg') ?>" alt=""></a>
-                        </div>
-                        <div class="txt">
-                            <div class="cnt">
-                                <h6>Washing Request</h6>
-                                <p>You have a new washing request from Sasha Smith <a href="?">Accept</a> or <a href="?">Decline</a></p>
-                            </div>
-                            <span class="time">Yesterday at 1:05 am</span>
-                        </div>
-                    </div>
+                    <?php
+                     endforeach;
+                    endif;
+                    ?>
                 </div>
             </div>
         </section>

@@ -115,7 +115,7 @@
                     <li id="noti">
                         <a href="<?= base_url() . $this->session->mem_type ?>/notifications">
                             <img src="<?= base_url('assets/images/icon-bell.svg') ?>" alt="">
-                            <span>7</span>
+                            <span><?=new_notifs()?></span>
                         </a>
                     </li>
                 </ul>

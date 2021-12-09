@@ -166,6 +166,14 @@ class Member_model extends CRUD_Model
         return ['vendors'=> $vendors, 'locations'=> $locations];
     }
 
+    function clear_notifs()
+    {
+        $this->db->set(['status'=> 'seen']);
+        $this->db->where(['mem_id'=> $this->session->mem_id]);
+        $this->db->update('notifications');
+        return true;
+    }
+
     function get_members_by_order($where = '', $start = '', $offset = '', $order_field = 'mem_id', $order_by = '')
     {
 

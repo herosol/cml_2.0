@@ -9,16 +9,19 @@ class Order_model extends CRUD_Model
         $this->field = "order_id";
     }
 
-    function get_buyer_orders()
+    function get_buyer_orders($where = null)
     {
         $this->db->from($this->table_name.' o');
         $this->db->join('members m', 'o.vendor_id=m.mem_id');
         $this->db->select('o.*, m.mem_image, m.mem_company_phone');
+        if($where !== null)
+            $this->db->where($where);
         $this->db->where(['o.buyer_id'=> $this->session->mem_id, 'o.paypal_pending'=> 'no']);
         $this->db->group_by('o.order_id');
         $this->db->order_by('o.order_id', 'DESC');
         return $this->db->get()->result();
     }
+
 
     function mem_review($order_id)
     {
@@ -155,17 +158,20 @@ class Order_model extends CRUD_Model
         $orders = $this->db->get()->result();
 
         $transactions = [];
+        $total_used_balance = 0;
         foreach($orders as $index => $order):
+            $order_amount = buyer_transaction_price($order->order_id);
+            $total_used_balance += $order_amount;
             $transactions[] = (object)
             [
                 'order_id'    => $order->order_id,
                 'vendor_name' => get_mem_name($order->vendor_id), 
-                'amount'      => buyer_transaction_price($order->order_id), 
+                'amount'      => $order_amount, 
                 'date'        => date_picker_format_date($order->order_date, 'D, d M Y', false)
             ];
         endforeach;
 
-        return (object)$transactions;
+        return ['transactions'=> (object)$transactions, 'total_used_balance'=> $total_used_balance];
     }
 
     function get_order_total($oid)

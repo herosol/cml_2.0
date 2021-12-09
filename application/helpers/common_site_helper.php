@@ -286,6 +286,14 @@ function new_messages()
     return intval($row->num_rows());
 }
 
+function new_notifs()
+{
+    global $CI;
+    $CI->db->where(['mem_id' => $CI->session->mem_id, 'status'=> 'new']);
+    $row = $CI->db->get('notifications');
+    return intval($row->num_rows());
+}
+
 function new_withdraws_requests()
 {
     global $CI;
