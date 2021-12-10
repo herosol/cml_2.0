@@ -402,11 +402,35 @@ class Index extends MY_Controller
             $res['frm_reset'] = 0;
             $res['status'] = 0;
 
-            $this->form_validation->set_rules('mem_fname', 'First Name', 'trim|required|alpha|min_length[2]|max_length[20]', ['alpha' => 'First Name should contains only letters and avoid space.', 'min_length' => 'First Name should contains atleast 2 letters.', 'max_length' => 'First Name should not be greater than 20 letters.']);
-            $this->form_validation->set_rules('mem_lname', 'Last Name', 'trim|required|alpha|min_length[2]|max_length[20]', ['alpha' => 'Last Name should contains only letters and avoid space.', 'min_length' => 'Last Name should contains atleast 2 letters.', 'max_length' => 'Last Name should not be greater than 20 letters.']);
-            $this->form_validation->set_rules('mem_email', 'Email', 'trim|required|valid_email');
-            $this->form_validation->set_rules('password', 'Password', 'required|min_length[8]|callback_is_password_strong', ['is_password_strong' => 'Password should contains alteast 1 small letter, 1 capital letter, 1 number, and one special characher.']);
-            $this->form_validation->set_rules('cpassword', 'Confirm Password', 'required|matches[password]', ['matches' => 'Confirm password must be the as the password.']);
+            $this->form_validation->set_rules('mem_fname', 'First Name', 'trim|required|alpha|min_length[2]|max_length[20]', 
+                [
+                    'alpha' => 'First Name should contains only letters and avoid space.',
+                    'min_length' => 'First Name should contains atleast 2 letters.',
+                    'max_length' => 'First Name should not be greater than 20 letters.'
+                ]);
+            $this->form_validation->set_rules('mem_lname', 'Last Name', 'trim|required|alpha|min_length[2]|max_length[20]', 
+                [
+                    'alpha' => 'Last Name should contains only letters and avoid space.',
+                    'min_length' => 'Last Name should contains atleast 2 letters.',
+                    'max_length' => 'Last Name should not be greater than 20 letters.'
+                ]);
+            $this->form_validation->set_rules('mem_email', 'Email', 'trim|required|valid_email|is_unique[members.mem_email]', 
+                [
+                    'valid_email' => 'Please enter a valid email.',
+                    'is_unique' => 'This email is already in use.'
+                ]);
+            $this->form_validation->set_rules('mem_phone', 'Email', 'trim|required|is_unique[members.mem_phone]', 
+            [
+                'is_unique' => 'This phone is already in use.'
+            ]);
+            $this->form_validation->set_rules('password', 'Password', 'required|min_length[8]|callback_is_password_strong', 
+                [
+                    'is_password_strong' => 'Password should contains alteast 1 small letter, 1 capital letter, 1 number, and one special characher.'
+                ]);
+            $this->form_validation->set_rules('cpassword', 'Confirm Password', 'required|matches[password]', 
+                [
+                    'matches' => 'Confirm password must be the as the password.'
+                ]);
             $this->form_validation->set_rules('confirm', 'Confirm', 'required', ['required' => 'Please accept our terms and conditions.']);
             if ($this->form_validation->run() === FALSE) {
                 $res['msg'] = validation_errors();
@@ -719,6 +743,45 @@ class Index extends MY_Controller
             $html = oneHourTimeByGiven('', $opening_time, $closing_time);
             echo json_encode(['status' => 'success', 'html' => $html]);
         }
+    }
+
+    function newsletter()
+	{
+        $res=array();
+        $res['hide_msg']=0;
+            $res['scroll_to_msg']=1;
+            $res['status'] = 0;
+            $res['frm_reset'] = 0;
+            $res['redirect_url'] = 0;
+
+        $this->form_validation->set_rules('email','Email','required|valid_email|is_unique[newsletter.email]',
+            array(
+                'required'      => 'You have not provided %s.',
+                'is_unique'     => 'This %s already joined.'
+            ));
+        if($this->form_validation->run()===FALSE)
+        {
+            $res['msg'] = validation_errors();
+            $res['status'] = 0;
+        }else{
+            $email=html_escape($this->input->post('email'));
+
+            if($this->master->save('newsletter', ['email'=> $email]))
+            {
+                $res['msg'] = showMsg('success','Joined successful!');
+                $res['status'] = 1;
+                $res['frm_reset'] = 1;
+                $res['hide_msg']=1;
+            }
+            else
+            {
+                $res['msg'] = showMsg('error', 'Something went wrong please try again.');
+                $res['status'] = 0;
+                $res['frm_reset'] = 0;
+                $res['hide_msg'] = 1;
+            }
+        }
+        exit(json_encode($res));
     }
 
     function change_password()

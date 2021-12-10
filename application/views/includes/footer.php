@@ -8,14 +8,15 @@
                     </a>
                 </div>
                 <p>Molestiae nisi consequuntur, provident, tempora numquam vero, rerum aperiam atis asperiores fuga.</p>
-                <form action="" method="POST" data-form="newsletter">
+                <form action="<?= base_url('newsletter')?>" method="post" autocomplete="off" class="frmAjax" id="newsletterFrm">
+                    <div class="alertMsg" style="display:none"></div>
                     <div class="inside">
                         <div class="form_blk">
                             <label for="email">@ Email address</label>
-                            <input type="text" name="" id="email" class="text_box">
+                            <input type="email" name="email" id="email" class="text_box">
                         </div>
                         <div class="btn_blk">
-                            <button type="submit" class="site_btn">Subscribe</button>
+                            <button type="submit" class="site_btn"><i class="spinner hidden"></i>Subscribe</button>
                         </div>
                     </div>
                 </form>
@@ -53,10 +54,10 @@
             </div>
             <div class="col">
                 <h4>App</h4>
-                <p>Download CML app</p>
+                <p>Coming Soon</p>
                 <ul class="playStore">
-                    <li><a href="?" target="_blank"><img src="<?= base_url('assets/images/google-play-store.svg') ?>" alt=""></a></li>
-                    <li><a href="?" target="_blank"><img src="<?= base_url('assets/images/apple-app-store.svg') ?>" alt=""></a></li>
+                    <li><img src="<?= base_url('assets/images/google-play-store.svg') ?>" alt=""></li>
+                    <li><img src="<?= base_url('assets/images/apple-app-store.svg') ?>" alt=""></li>
                 </ul>
             </div>
         </div>

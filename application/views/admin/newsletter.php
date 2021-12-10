@@ -51,7 +51,7 @@
         <div class="col-md-6">
             <h2 class="no-margin"><i class="entypo-list"></i> Manage <strong>Newsletter</strong></h2>
         </div>
-        <div class="col-md-6 text-right">
+        <div class="col-md-6 text-right hidden">
             <a href="<?= site_url(ADMIN . '/newsletter/csv-export'); ?>" target="_blank" class="btn btn-lg btn-primary"><i class="fa fa-download"></i> CSV Export</a>
         </div>
     </div>

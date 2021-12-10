@@ -248,12 +248,12 @@
                     <span class="title">Manage FAQ's</span>
                 </a>
             </li>
-            <!-- <li class="opened <?= ($this->uri->segment(2) == 'newsletter') ? 'active' : '' ?>">
+            <li class="opened <?= ($this->uri->segment(2) == 'newsletter') ? 'active' : '' ?>">
                 <a href="<?= site_url(ADMIN.'/newsletter') ?>">
                     <i class="fa fa-file"></i>
                     <span class="title">Newsletter</span><span class="badge badge-danger"><?=new_subscribers()?></span>
                 </a>
-            </li> -->
+            </li>
             <li class="opened <?= ($this->uri->segment(2) == 'promos') ? 'active' : '' ?>">
                 <a href="<?= site_url(ADMIN.'/promos') ?>">
                     <i class="fa fa-file"></i>

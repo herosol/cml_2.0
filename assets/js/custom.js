@@ -381,25 +381,15 @@ $(document).ready(function () {
 						select_address += `<h6>Select your address</h6>
                         <div class="flexGrp"><div class="txtGrp">
                         <label for="address" class="move">Address</label>
-                        <select name="address" id="address" class="txtBox" onchange="setAddress(this)">
+                        <select name="address" id="address" class="text_box" onchange="setAddress(this)">
                         <option value="">Select</option>`;
 						if (
 							$.trim(mem.mem_city).length != 0 &&
 							$.trim(mem.mem_address).length != 0 &&
 							$.trim(mem.mem_zip).length != 0
 						) {
-							select_address += `<option data-type="home" value="${
-								mem.mem_city
-							} - ${mem.mem_address} - ${mem.mem_zip}" data-lat="${
-								mem.mem_map_lat
-							}" data-long="${mem.mem_map_lng}" data-full-address="Home: ${
-								mem.mem_city
-							} - ${mem.mem_address} - ${mem.mem_zip}" ${
-								address_type.val() == "home" ? "selected" : ""
-							}>
-                            Home: ${mem.mem_city} - ${mem.mem_address} - ${
-								mem.mem_zip
-							}
+							select_address += `<option data-type="home" value="${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}" data-lat="${mem.mem_map_lat}" data-long="${mem.mem_map_lng}" data-full-address="Home: ${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}">
+                            Home: ${mem.mem_city} - ${mem.mem_address} - ${mem.mem_zip}
                             </option>`;
 						}
 						if (
@@ -407,20 +397,8 @@ $(document).ready(function () {
 							$.trim(mem.mem_business_address).length != 0 &&
 							$.trim(mem.mem_business_zip).length != 0
 						) {
-							select_address += ` <option data-type="office" value="${
-								mem.mem_business_city
-							} - ${mem.mem_business_address} - ${
-								mem.mem_business_zip
-							}" data-lat="${mem.mem_business_map_lat}" data-long="${
-								mem.mem_business_map_lng
-							}" data-full-address="Office: ${mem.mem_business_city} - ${
-								mem.mem_business_address
-							} - ${mem.mem_business_zip}" ${
-								address_type.val() == "office" ? "selected" : ""
-							}>
-                            Office: ${mem.mem_business_city} - ${
-								mem.mem_business_address
-							} - ${mem.mem_business_zip}
+							select_address += ` <option data-type="office" value="${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}" data-lat="${mem.mem_business_map_lat}" data-long="${mem.mem_business_map_lng}" data-full-address="Office: ${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}">
+                            Office: ${mem.mem_business_city} - ${mem.mem_business_address} - ${mem.mem_business_zip}
                             </option>`;
 						}
 						if (
@@ -428,20 +406,8 @@ $(document).ready(function () {
 							$.trim(mem.mem_hotel_address).length != 0 &&
 							$.trim(mem.mem_hotel_zip).length != 0
 						) {
-							select_address += `<option data-type="hotel" value="${
-								mem.mem_hotel_city
-							} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}" data-lat="${
-								mem.mem_hotel_map_lat
-							}" data-long="${
-								mem.mem_hotel_map_lng
-							}" data-full-address="Hotel: ${mem.mem_hotel_city} - ${
-								mem.mem_hotel_address
-							} - ${mem.mem_hotel_zip}" ${
-								address_type.val() == "hotel" ? "selected" : ""
-							}>
-                            Hotel: ${mem.mem_hotel_city} - ${
-								mem.mem_hotel_address
-							} - ${mem.mem_hotel_zip}
+							select_address += `<option data-type="hotel" value="${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}" data-lat="${mem.mem_hotel_map_lat}" data-long="${mem.mem_hotel_map_lng}" data-full-address="Hotel: ${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}">
+                            Hotel: ${mem.mem_hotel_city} - ${mem.mem_hotel_address} - ${mem.mem_hotel_zip}
                             </option>`;
 						}
 						select_address += `</select></div>`;
@@ -456,7 +422,8 @@ $(document).ready(function () {
 						}
 
 						select_address += `</div><div class="br"></div>`;
-						$("#select-address").html(select_address);
+						console.log(select_address);
+						$("#select-address-after-login").html(select_address);
 					}, 3000);
 				} else {
 					setTimeout(function () {

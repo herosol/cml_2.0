@@ -20,7 +20,7 @@
                     <div class="txt">
                         <div class="date"><?= format_date($row->created_date,'M d Y h:i:s A'); ?></div>
                         <h4><a><?= $row->title?></a></h4>
-                        <?=$row->description?>
+                        <?=html_entity_decode($row->description)?>
                     </div>
                 </div>
             </div>

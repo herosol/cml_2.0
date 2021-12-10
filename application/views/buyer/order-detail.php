@@ -74,7 +74,7 @@
                                         <span><?= date_picker_format_date($order->delivery_date, 'D, d M Y', false) ?> - <?= $order->delivery_time ?></span>
                                     </li>
                                 <?php endif; ?>
-                                <li>
+                                <li class="hidden">
                                     <strong>Notes:</strong>
                                     <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis doloribus fugiat sapiente, eius facere neque maiores expedita quas aspernatur. Illo voluptatem obcaecati doloremque blanditiis, eius error odio possimus nulla eligendi.</span>
                                 </li>

@@ -59,7 +59,7 @@
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <h6>Phone Number <sup>*</sup></h6>
                                         <div class="form_blk">
-                                            <input type="text" name="mem_phone" id="mem_phone" class="text_box" placeholder="eg: +92300 0000 000">
+                                            <input type="text" name="mem_phone" id="mem_phone" class="text_box" placeholder="+44 0000 000000">
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">

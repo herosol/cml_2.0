@@ -605,6 +605,9 @@
                                             </div>
                                         <?php endif; ?>
                                         <div class="br"></div>
+                                        <div id="select-address-after-login">
+
+                                        </div>
                                         <div id="enter-address-runtime" class="hidden">
                                             <h6>Enter your address</h6>
                                             <div class="form_row row">
@@ -916,7 +919,7 @@
                             </div>
                         </div>
                         <div class="col col3">
-                            <div class="estimate_blk blk scrollbar">
+                            <div class="estimate_blk blk scrollbar" id="basket-summary-div">
                                 <div class="top_head">
                                     <h5 class="heading">Basket Summary</h5>
                                     <div class="btn_blk hidden">
@@ -1083,8 +1086,9 @@
             $(document).ready(function(){
                 $('a').click(function(){
                     let url = $(this).attr('href');
+                    let newTab = $(this).attr('target');
                     let shouldAllow = ['javascript:void(0)', undefined, ''];
-                    if(!shouldAllow.includes(url))
+                    if(!shouldAllow.includes(url) && newTab === undefined)
                     {
                         let answer = confirm("If you leave this page, you will have to repeat all the process again from start. Click Ok to leave!");
                         if (answer)
@@ -1098,6 +1102,7 @@
                     }
                 });
             });
+
             var pickupDeliveryCharges = '<?= price_format($vendor->mem_charges_per_miles * 2) ?>';
             $(function() {
                 li = $('.svc_lst > li:first');
@@ -1184,6 +1189,9 @@
                                 if (parseFloat(total.toFixed(2)) < parseFloat(minimumOrder)) {
                                     $('.servicesMessage').html(`Please order atleast price of £${parseFloat(minimumOrder).toFixed(2)}`);
                                     $('.servicesMessage').fadeIn();
+                                    $('#basket-summary-div').stop().animate({
+                                        scrollTop: $('#basket-summary-div')[0].scrollHeight
+                                    }, 800);
                                     return false;
                                 } else {
                                     $('.servicesMessage').fadeOut();
@@ -1516,6 +1524,9 @@
                         $('#pickup-and-delivery-preview').hide();
                         $('#estimated-total').text(`£${(parseFloat(total)).toFixed(2)}`);
                         $('#estimated-total-preview').text(`£${(parseFloat(total)).toFixed(2)}`);
+                        $('#basket-summary-div').stop().animate({
+                            scrollTop: $('#basket-summary-div')[0].scrollHeight
+                        }, 800);
                     } else {
                         $('.freePickupAndDelivery').fadeOut();
                         $('#pickup-and-delivery-preview').show();

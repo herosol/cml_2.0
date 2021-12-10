@@ -45,7 +45,7 @@
         $(document).ready(function(){
             $(window).scroll(function(){
                 var lastID = $('.load-more').attr('lastID');
-                if($(window).scrollTop() + $(window).height() + 250 >= $(document).height()){
+                if(Math.ceil($(window).scrollTop()) == Math.ceil(($(document).height() - $(window).height()))) {
                     $.ajax({
                         type:'POST',
                         url:'<?php echo base_url('blogs/load_more_data'); ?>',
