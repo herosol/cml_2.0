@@ -325,7 +325,7 @@ class Booking extends MY_Controller
                 }
                 if ($order_id > 0)
                 {
-                    $notify_txt = 'You have recieved new order. <a href="'.base_url().'vendor/order-detail/w4635323">Click here</a> to view.';
+                    $notify_txt = 'You have recieved new order. <a href="@@vendor/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
                     $notify = ['mem_id'=> $this->data['vendor_id'], 'from_id'=> $buyer_id, 'txt'=> $notify_txt, 'cat'=> 'new_order'];
                     $this->master->save('notifications', $notify);
                     $this->session->set_userdata('mem_id', $buyer_id);

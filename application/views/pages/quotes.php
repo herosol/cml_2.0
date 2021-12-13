@@ -208,7 +208,7 @@
                 });
                 $('#distance').ionRangeSlider({
                     skin: 'square',
-                    min: 1,
+                    min: 0,
                     max: 50,
                     type: 'double',
                     prettify: function(num) {
@@ -251,7 +251,7 @@
                 });
                 $('#distance').ionRangeSlider({
                     skin: 'square',
-                    min: 1,
+                    min: 0,
                     max: 50,
                     type: 'double',
                     prettify: function(num) {

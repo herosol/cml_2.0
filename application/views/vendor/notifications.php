@@ -33,7 +33,7 @@
                                     <h6><?=makeNotifHeading($notif->cat)?> From <?=get_mem_name($notif->from_id)?></h6>
                                     <p><?=makeNotifText($notif->txt)?></p>
                                 </div>
-                                <span class="time">2 hours ago</span>
+                                <span class="time"><?=time_ago($notif->date)?></span>
                             </div>
                         </div>
                     <?php

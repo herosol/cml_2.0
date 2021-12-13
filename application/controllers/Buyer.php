@@ -77,7 +77,7 @@ class Buyer extends MY_Controller
     {
         $this->isMemLogged($this->session->mem_type, true, $this->uri->segment(1));
         $clear = $this->member_model->clear_notifs();
-        $this->data['notifications'] = $this->master->get_data_rows('notifications', ['mem_id'=> $this->session->mem_id]);
+        $this->data['notifications'] = $this->master->get_data_rows('notifications', ['mem_id'=> $this->session->mem_id], 'DESC');
         $this->load->view('buyer/notifications', $this->data);
     }
 
@@ -103,7 +103,7 @@ class Buyer extends MY_Controller
         $this->data['delivered_orders'] = $delivered_orders;
 
         // CANCELED ORDERS
-        $canceled_orders = $this->order_model->get_buyer_orders(['order_status'=> 'Canceled']);
+        $canceled_orders = $this->order_model->get_buyer_orders(['order_status'=> 'Cancelled']);
         $services = [];
         foreach ($canceled_orders as $index => $order) :
             $order_detail = $this->master->getRows('order_detail', array('order_id' => $order->order_id));

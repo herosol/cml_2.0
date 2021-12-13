@@ -129,6 +129,7 @@
                 <th>Image</th>
                 <th>Name</th>
                 <th>Review</th>
+                <th>Status</th>
                 <th width="12%" class="text-center">&nbsp;</th>
             </tr>
         </thead>
@@ -144,6 +145,7 @@
                             </div>
                         </td>
                         <td><b><?= $row->name; ?></b></br>&emsp;<?= short_text($row->detail); ?></td>
+                        <td class="text-center"><?= getStatus($row->status); ?></td>
                         <td class="text-center">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Action <span class="caret"></span></button>

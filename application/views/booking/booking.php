@@ -1521,6 +1521,7 @@
                     if (parseFloat(total.toFixed(2)) > parseFloat(freePickupAmount)) {
                         $('.freePickupAndDelivery').html(`Free Pickup & Delivery Service`);
                         $('.freePickupAndDelivery').fadeIn();
+                        $('.pickdrop_charges').addClass('hidden');
                         $('#pickup-and-delivery-preview').hide();
                         $('#estimated-total').text(`£${(parseFloat(total)).toFixed(2)}`);
                         $('#estimated-total-preview').text(`£${(parseFloat(total)).toFixed(2)}`);
@@ -1529,6 +1530,7 @@
                         }, 800);
                     } else {
                         $('.freePickupAndDelivery').fadeOut();
+                        $('.pickdrop_charges').removeClass('hidden');
                         $('#pickup-and-delivery-preview').show();
                         $('#estimated-total').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
                         $('#estimated-total-preview').text(`£${(parseFloat(total) + parseFloat(pickupDeliveryCharges)).toFixed(2)}`);
