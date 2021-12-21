@@ -30,7 +30,7 @@
 								<div class="panel-body">
 									<div class="fileinput fileinput-new" data-provides="fileinput"><input type="hidden"><input type="hidden">
 										<div class="fileinput-new thumbnail" style="max-width: 310px; height: 110px;" data-trigger="fileinput">
-											<img src="<?= !empty($row->image) ? getImageSrc(SITE_IMAGES . "/partners/thumb_", $row->image) : 'http://placehold.it/1500x1000' ?>" alt="--">
+											<img src="<?= !empty($row->image) ? get_site_image_src("partners/", $row->image, 'thumb_') : 'http://placehold.it/1500x1000' ?>" alt="--">
 										</div>
 										<div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 320px; max-height: 160px; line-height: 6px;"></div>
 
@@ -106,7 +106,7 @@
 					?>
 					<tr class="odd gradeX">
 						<td class="text-center"><?= ++$count; ?></td>
-						<td><img src="<?=  getImageSrc(UPLOAD_PATH . "/partners/thumb_", $row->image) ?>" height="50" alt="--"></td>
+						<td><img src="<?=  get_site_image_src("partners/", $row->image, 'thumb_') ?>" height="50" alt="--"></td>
 						<td><?=  $row->external_link ?></td>
 						<td class="text-center"><?= getStatus($row->status); ?></td>
 						<td class="text-center">

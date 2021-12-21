@@ -79,6 +79,13 @@
                                         <strong>Drop Off Date & Time:</strong>
                                         <span><?= date_picker_format_date($order->delivery_date, 'D, d M Y', false) ?> - <?= $order->delivery_time ?></span>
                                     </li>
+                                    <?php endif; ?>
+                                    <?php if (!empty($order->extra_address_detail)) : ?>
+                                        <li>
+                                            <strong>Extra Address:</strong>
+                                            <span><?= $order->extra_address_detail ?></span>
+                                        </li>
+                                    <?php endif; ?>
                                     <li>
                                         <strong>Customer Notes:</strong>
                                         <span>
@@ -86,13 +93,6 @@
                                             <button type="button" class="site_btn md" id="save-notes" data-o-id="<?= doEncode($order->order_id) ?>">Save Notes</button>
                                         </span>
                                     </li>
-                                <?php endif; ?>
-                                <?php if (!empty($order->extra_address_detail)) : ?>
-                                    <li>
-                                        <strong>Extra Address:</strong>
-                                        <span><?= $order->extra_address_detail ?></span>
-                                    </li>
-                                <?php endif; ?>
                             </ul>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <h6>Price <sup>*</sup></h6>
+                                            <h6>Unit Price <sup>*</sup></h6>
                                             <div class="form_blk">
                                                 <input type="text" name="sub_service_price" id="sub_service_price" class="text_box" placeholder="eg: 250">
                                             </div>

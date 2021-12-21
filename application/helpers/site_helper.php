@@ -9,11 +9,24 @@ function get_header()
     else
         $CI->load->view('includes/header');
 }
+
 function get_pages()
 {
-    $page_arr = array(1=>'index',2=>'faq',3=>'promotions-offers',4=>'contact',5=>'signin',6=>'signup-as',7=>'terms-and-conditions');
+    $page_arr = [
+        1 => 'index',
+        2 => 'faq',
+        3 => 'promotions-offers',
+        4 => 'contact',
+        5 => 'signin',
+        6 => 'signup-as',
+        7 =>' terms-and-conditions',
+        8 => 'blogs',
+        9 => 'impact',
+        10 => 'privacy-policy'
+    ];
     return $page_arr;  
 }
+
 function get_sub_service_name($id){
     $CI = get_instance();
     $service = $CI->master->getRow('sub_services',array('id'=>$id));
@@ -32,6 +45,7 @@ function get_partners(){
     $CI = get_instance();
     return $CI->master->getRows('partners',array('status'=>1));
 }
+
 function get_papular_products($limit)
 {
     $CI = get_instance();

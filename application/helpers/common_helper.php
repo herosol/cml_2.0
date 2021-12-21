@@ -231,7 +231,7 @@ function get_site_image_src($path, $image, $type = '', $user_image = false)
     if (!empty($image) && @file_exists(FCPATH . 'uploads/' . $path . '/' . $type . $image)) {
         return $filepath;
     }
-    return empty($user_image) ? base_url('assets/images/no-image.svg') : base_url('assets/images/no-user.svg');
+    return empty($user_image) ? base_url('assets/images/no-image.svg') : base_url('assets/images/no-image.svg');
 }
 
 function getImageDimension($image)

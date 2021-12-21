@@ -304,6 +304,9 @@
                     type: "POST",
                     data: $.param(formData),
                     dataType: 'json',
+                    beforeSend: function() {
+                        $('#quotes-section').html('Loading...');
+                    },
                     success: function (res) {
                         if(btn !== null)
                         {

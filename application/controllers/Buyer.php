@@ -265,6 +265,7 @@ class Buyer extends MY_Controller
             endforeach;
 
             generate_order_log_for_vendor(doDecode($post['order_id']));
+            $order_id = doDecode($post['order_id']);
             // echo price_format($amend_pending); die;
 
             if ($post['payment_type'] == 'credit-card') {
@@ -310,6 +311,12 @@ class Buyer extends MY_Controller
 
             if (doDecode($post['order_id']) > 0) {
                 if ($post['payment_type'] == 'credit-card') {
+                    // NOTIFY
+                    $order = $this->order_model->get_row($order_id);
+                    $notify_txt = 'Buyer has paid your invoice. <a href="@@vendor/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+                    $notify = ['mem_id'=> $order->vendor_id, 'from_id'=> $order->buyer_id, 'txt'=> $notify_txt, 'cat'=> 'paid_amended_invoice'];
+                    $this->master->save('notifications', $notify);
+
                     $res['msg'] = 'Your paymnet transaction done successfully.';
                     $res['status'] = 1;
                     $res['html'] = amended_invoice($row->order_id, $amended_records);

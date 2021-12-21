@@ -51,6 +51,7 @@
                 <a href="<?= site_url(ADMIN.'/orders') ?>">
                     <i class="fa fa-file"></i>
                     <span class="title">Manage Orders</span>
+                    <span class="badge badge-info"><?=new_orders()?></span>
                 </a>
             </li>
             <li class="opened <?= ($this->uri->segment(2) == 'invoices') ? 'active' : '' ?>">
@@ -76,6 +77,7 @@
                         <a href="<?= site_url(ADMIN.'/withdraws/requests') ?>">
                             <i class="fa fa-user"></i>
                             <span class="title">Withdraws Requests</span>
+                            <span class="badge badge-info"><?=new_withdraws_requests()?></span>
                         </a>
                     </li>
                 </ul>
@@ -84,6 +86,7 @@
                 <a href="javascript:void(0)">
                     <i class="entypo-doc-text  "></i>
                     <span class="title">Manage Delivery Proofs</span>
+                    <span class="badge badge-info"><?=new_delivery_proofs()?></span>
                 </a>
                 <ul>
                     <li class=" <?= ($this->uri->segment(2) == 'pending-proof') ? ' active' : '' ?>">
@@ -109,7 +112,7 @@
             <li class="opened<?= $this->uri->segment('2') == 'contact' ? ' active' : '' ?>">
                 <a href="<?= site_url(ADMIN.'/contact') ?>">
                     <i class="fa fa-comments"></i>
-                    <span class="title">Manage Contacts</span><span class="badge badge-success"><?=new_messages()?></span>
+                    <span class="title">Manage Contacts</span><span class="badge badge-info"><?=new_messages()?></span>
                 </a>
             </li>
             <li class=" <?= ($this->uri->segment(2) == 'services' || $this->uri->segment(2) == 'sub_services') ? ' opened  active' : '' ?>">
@@ -251,7 +254,7 @@
             <li class="opened <?= ($this->uri->segment(2) == 'newsletter') ? 'active' : '' ?>">
                 <a href="<?= site_url(ADMIN.'/newsletter') ?>">
                     <i class="fa fa-file"></i>
-                    <span class="title">Newsletter</span><span class="badge badge-danger"><?=new_subscribers()?></span>
+                    <span class="title">Newsletter</span><span class="badge badge-info"><?=new_subscribers()?></span>
                 </a>
             </li>
             <li class="opened <?= ($this->uri->segment(2) == 'promos') ? 'active' : '' ?>">

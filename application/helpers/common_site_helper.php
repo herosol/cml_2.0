@@ -301,6 +301,24 @@ function new_withdraws_requests()
     $row = $CI->db->get('withdraws');
     return intval($row->num_rows());
 }
+
+function new_orders()
+{
+    global $CI;
+    $CI->db->where('order_status', 'New');
+    $row = $CI->db->get('orders');
+    return intval($row->num_rows());
+}
+
+function new_delivery_proofs()
+{
+    global $CI;
+    $CI->db->where('status', 'pending');
+    $row = $CI->db->get('order_delivery_proof');
+    return intval($row->num_rows());
+}
+
+
 function new_subscribers()
 {
     global $CI;
@@ -446,9 +464,11 @@ function amended_invoice($order_id, $amended_records)
     $html = '';
     $total = $services_total;
     $payButton = '';
+
     if ($CI->session->mem_type == 'buyer') {
-        $payButton .= '<button type="button" class="webBtn smBtn popBtn icoBtn" data-popup="pay-amend-invoice"><img src="' . base_url() . 'assets/images/icon-price-list.svg" alt="">Pay</button>';
+        $payButton .= '<button type="button" class="site_btn md light pop_btn" data-popup="pay-amend-invoice"><img src="' . base_url() . 'assets/images/icon-price-list.svg" alt="">Pay</button>';
     }
+    
     if (!empty($amended_records)) :
         $html .= '<hr>
         <h4>Amended Invoice</h4>

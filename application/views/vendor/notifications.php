@@ -25,12 +25,12 @@
                         <div class="inner">
                             <div class="ico">
                                 <a>
-                                    <img src="<?= get_site_image_src("members", get_mem_image($notif->from_id), 'thumb_'); ?>" alt="">
+                                    <img src="<?= $notif->from_id == 0 ? get_site_image_src('images/', $site_settings->site_logo)  : get_site_image_src("members", get_mem_image($notif->from_id), 'thumb_'); ?>" alt="">
                                 </a>
                             </div>
                             <div class="txt">
                                 <div class="cnt">
-                                    <h6><?=makeNotifHeading($notif->cat)?> From <?=get_mem_name($notif->from_id)?></h6>
+                                    <h6><?=makeNotifHeading($notif->cat)?> From <?=$notif->from_id == 0 ? 'Admin' : get_mem_name($notif->from_id)?></h6>
                                     <p><?=makeNotifText($notif->txt)?></p>
                                 </div>
                                 <span class="time"><?=time_ago($notif->date)?></span>

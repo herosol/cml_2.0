@@ -392,7 +392,7 @@ class Vendor extends MY_Controller
             $res['redirect_url'] = 0;
 
             $post = html_escape($this->input->post());
-            $post['order_id'] = doDecode($post['order_id']);
+            $post['order_id'] = $order_id = doDecode($post['order_id']);
 
             $this->form_validation->set_rules('sub_service_name', 'Title', 'required|trim');
             $this->form_validation->set_rules('quantity', 'Quantity', 'required|trim');
@@ -410,6 +410,11 @@ class Vendor extends MY_Controller
             $order_detail = $this->orderd_model->get_rows(['order_id' => $post['order_id'], 'service_type' => 'basic']);
             $amended = $this->orderd_model->get_rows(['order_id' => $post['order_id'], 'service_type' => 'amended']);
             generate_order_log_for_buyer($post['order_id']);
+            // NOTIF
+            $notify = [];
+            $notify_txt = 'Vendor has generated invoice. <a href="@@buyer/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+            $notify = ['mem_id'=> $order->buyer_id, 'from_id'=> $order->vendor_id, 'txt'=> $notify_txt, 'cat'=> 'amended_invoice'];
+            $this->master->save('notifications', $notify);
 
             $res['msg']       = showMsg('success', 'Invoice sent successfully!');
             $res['status']    = 1;
@@ -463,9 +468,14 @@ class Vendor extends MY_Controller
             $post = html_escape($this->input->post());
             $notes   = $post['notes'];
             $order_id = doDecode($post['order_id']);
-
+            $order = $this->order_model->get_row($order_id);
+            
             $is_update = $this->order_model->save(['order_note' => trim($notes)], $order_id);
+            $notify = [];
             if ($is_update) {
+                $notify_txt = 'Vendor has created order notes. <a href="@@buyer/order-detail/'.doEncode($order_id).'">Click here</a> to view.';
+                $notify = ['mem_id'=> $order->buyer_id, 'from_id'=> $order->vendor_id, 'txt'=> $notify_txt, 'cat'=> 'order_notes'];
+                $this->master->save('notifications', $notify);
                 exit(json_encode(['status' => 'success']));
             } else {
                 exit(json_encode(['status' => 'failed']));

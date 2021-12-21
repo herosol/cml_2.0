@@ -470,7 +470,7 @@
                 <td class="text-center"><?= ++$count; ?></td>
                 <td class="text-center">
                     <div class="icoRound">
-                        <img src = "<?= getImageSrc(UPLOADIMAGE.'members/' , $row->mem_image,'member'); ?>" height = "60">
+                        <img src = "<?= get_site_image_src('members/' , $row->mem_image, 'thumb_'); ?>" height = "60">
                     </div>
                 </td>
                 <td><b><?= $row->mem_fname . ' ' . $row->mem_lname; ?></b></td>

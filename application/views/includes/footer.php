@@ -26,7 +26,7 @@
                 <ul class="lst">
                     <li><a href="<?= base_url() ?>">Home</a></li>
                     <li><a href="<?= base_url('about-us') ?>">About us</a></li>
-                    <li><a href="<?= base_url('promotions-offers') ?>">Promotions</a></li>
+                    <li><a href="<?= base_url('promotions-offers') ?>">Promotions & Offers</a></li>
                     <li><a href="<?= base_url('blogs') ?>">Blog Posts</a></li>
                     <li><a href="<?= base_url('impact') ?>">Impact</a></li>
                 </ul>

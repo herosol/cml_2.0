@@ -47,16 +47,8 @@ class Withdraws extends Admin_Controller {
         $id = intval($id);
         if($row = $this->withdraw_model->get_row_where(['id'=> $id, 'status'=> 'pending']))
         {
+            $vendor_id = $row->mem_id;
             $save_data = array('status'=>'completed', 'paid_date'=>date('Y-m-d h:i:s'));
-            // $bank = intval($this->input->post('bank'));
-
-            // if ($bank<1 || !$this->payment_methods_model->get_mem_method($bank,$row->mem_id)) {
-            //     setMsg('error', 'Bank not belongs to that tutor!');
-            //     redirect(ADMIN . '/withdraws/detail/'.$id, 'refresh');
-            //     exit;
-            // }
-
-            // $save_data['payment_method_id']=$bank;
 
             $withdraw_transactions = $this->master->getRows('withdrawal_detail', ['withdraw_id'=> $id]);
             $is_completed = $this->withdraw_model->save($save_data, $id);
@@ -67,6 +59,11 @@ class Withdraws extends Admin_Controller {
                     $update_status = $this->master->save('earnings', ['status'=> 'paid'], 'id', $row->earning_id);
                 endforeach;
             }
+
+            // NOTIFY
+            $notify_txt = 'Admin has approved your withdraw request. <a href="@@vendor/wallet">Click here</a> to view.';
+            $notify = ['mem_id'=> $vendor_id, 'from_id'=> 0, 'txt'=> $notify_txt, 'cat'=> 'withdraw_request_approved'];
+            $this->master->save('notifications', $notify);
 
             setMsg('success', 'Withdraw request has been completed successfully.');
             redirect(ADMIN . '/withdraws/detail/'.$id, 'refresh');
